@@ -93,6 +93,7 @@ export default function WaitlistForm() {
       setSubmittedData(data)
       setIsSubmitted(true)
     } catch (error) {
+      console.log(error)
       toast("Failed to submit waitlist form")
     }
   }
@@ -125,13 +126,13 @@ export default function WaitlistForm() {
               <WaitlistIcon />
               <DialogHeader>
                 <DialogTitle className="font-figtree font-bold text-[28px] tracking-[2%] text-center text-[#232323]">
-                  You're now on the list! 🎉
+                  You&apos;re now on the list! 🎉
                 </DialogTitle>
                 <DialogDescription className="font-figtree font-normal text-sm/[120%] -tracking-[2%] text-center text-[#525252]">
-                  Thank you for joining the Runnix waitlist. You're now one step
-                  closer to experiencing seamless, reliable deliveries in your
-                  area. We'll keep you updated on our launch and exclusive early
-                  access opportunities. Stay tuned!
+                  Thank you for joining the Runnix waitlist. You&apos;re now one
+                  step closer to experiencing seamless, reliable deliveries in
+                  your area. We&apos;ll keep you updated on our launch and
+                  exclusive early access opportunities. Stay tuned!
                 </DialogDescription>
               </DialogHeader>
               <div className="w-full flex justify-center items-center gap-6 sm:gap-9">

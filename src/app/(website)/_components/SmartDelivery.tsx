@@ -65,9 +65,9 @@ export default function SmartDeliverySection() {
           <p className="text-sm md:text-base 2xl:text-[20px] leading-[140%] font-figtree dark:text-[#DCDCDC] text-[#626A62] max-w-[700px]">
             Runnix is your go-to platform for effortless deliveries, designed to
             bring merchants, agents, and customers together on one seamless
-            experience. Whether you're managing a business, handling deliveries,
-            or receiving orders, we make the process transparent, reliable, and
-            fast.
+            experience. Whether you&apos;re managing a business, handling
+            deliveries, or receiving orders, we make the process transparent,
+            reliable, and fast.
           </p>
         </div>
       </div>

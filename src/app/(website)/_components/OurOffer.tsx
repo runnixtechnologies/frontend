@@ -3,7 +3,6 @@
 import { OfferImage3, OfferImage4 } from "@/components/svgs/offer_imgs"
 import { OfferImage1 } from "@/components/svgs/offer_imgs/offer_img-1"
 import { OfferImage2 } from "@/components/svgs/offer_imgs/offer_img-2"
-import Image from "next/image"
 
 interface OfferProps {
   id: number
@@ -41,7 +40,7 @@ const offers: OfferProps[] = [
 
 export default function OurOfferSection() {
   return (
-    <section className="w-full min-h-[539px] relative dark:bg-[#1D192B] bg-white flex justify-center items-center px-4 sm:px-6 md:px-10 xl:px-30 py-16 sm:pt-20 sm:pb:30">
+    <section className="w-full min-h-[539px] relative ∏dark:bg-[#1D192B] bg-white flex justify-center items-center px-4 sm:px-6 md:px-10 xl:px-30 py-16 sm:pt-20 sm:pb:30">
       <div
         className="w-full max-w-[1200px] flex flex-col gap-12 items-center xl:items-start"
         data-aos="fade-up"
