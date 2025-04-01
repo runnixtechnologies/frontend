@@ -1,26 +1,151 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@custom-variant dark (&:is(.dark *));
+body {
+  font-family: var(--font-figtree), Helvetica, sans-serif;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-figtree: var(--font-figtree);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --breakpoint-fold: 17.5rem; /*280px / 16 = 17.5rem (Galaxy Fold folded) */
+  --breakpoint-xs: 20rem; /* 320px / 16 = 20rem (iPhone 5/SE)*/
+  --breakpoint-sm: 23.4375rem; /* 375px / 16 = 23.4375rem (iPhone 6/7/8, iPhone X/XS/11 Pro, iPhone 13 Mini, iPhone 14)*/
+  --breakpoint-sm-md: 24.375rem; /* 390px / 16 = 24.375rem (iPhone 13, iPhone 14 Pro, iPhone 15, iPhone 16)*/
+  --breakpoint-md: 26.75rem; /* 428px / 16 = 26.75rem (iPhone 6/7/8 Plus, iPhone XR/11, iPhone 13 Pro Max, iPhone 14 Plus, iPhone 15 Plus, iPhone 16 Plus)*/
+  --breakpoint-lg: 40.8125rem; /* 653px / 16 = 40.8125rem (Galaxy Fold unfolded, iPad Mini in portrait)*/
+  --breakpoint-xl: 64rem; /* 1024px / 16 = 64rem (iPad Pro 10.5", iPad Pro 12.9")*/
+  --breakpoint-2xl: 80rem; /* 1280px / 16 = 80rem (small laptops, desktops)*/
+  --breakpoint-3xl: 90rem; /* 1440px / 16 = 90rem (larger desktops)*/
+  --breakpoint-4xl: 120rem; /* 1920px / 16 = 120rem (full HD desktops)*/
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.147 0.004 49.25);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.147 0.004 49.25);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.147 0.004 49.25);
+  --primary: oklch(54.51% 0.1296 302.32);
+  --primary-foreground: oklch(0.985 0.001 106.423);
+  --secondary: oklch(0.97 0.001 106.424);
+  --secondary-foreground: oklch(54.51% 0.1296 302.32);
+  --muted: oklch(0.97 0.001 106.424);
+  --muted-foreground: oklch(0.553 0.013 58.071);
+  --accent: oklch(0.97 0.001 106.424);
+  --accent-foreground: oklch(54.51% 0.1296 302.32);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(54.51% 0.1296 302.32);
+  --input: oklch(54.51% 0.1296 302.32);
+  --ring: oklch(0.709 0.01 56.259);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0.001 106.423);
+  --sidebar-foreground: oklch(0.147 0.004 49.25);
+  --sidebar-primary: oklch(54.51% 0.1296 302.32);
+  --sidebar-primary-foreground: oklch(0.985 0.001 106.423);
+  --sidebar-accent: oklch(0.97 0.001 106.424);
+  --sidebar-accent-foreground: oklch(54.51% 0.1296 302.32);
+  --sidebar-border: oklch(54.51% 0.1296 302.32);
+  --sidebar-ring: oklch(0.709 0.01 56.259);
+}
+
+.dark {
+  --background: oklch(0.147 0.004 49.25);
+  --foreground: oklch(0.985 0.001 106.423);
+  --card: oklch(54.51% 0.1296 302.32);
+  --card-foreground: oklch(0.985 0.001 106.423);
+  --popover: oklch(54.51% 0.1296 302.32);
+  --popover-foreground: oklch(0.985 0.001 106.423);
+  --primary: oklch(54.51% 0.1296 302.32);
+  --primary-foreground: oklch(54.51% 0.1296 302.32);
+  --secondary: oklch(0.268 0.007 34.298);
+  --secondary-foreground: oklch(0.985 0.001 106.423);
+  --muted: oklch(0.268 0.007 34.298);
+  --muted-foreground: oklch(0.709 0.01 56.259);
+  --accent: oklch(0.268 0.007 34.298);
+  --accent-foreground: oklch(0.985 0.001 106.423);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.553 0.013 58.071);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(54.51% 0.1296 302.32);
+  --sidebar-foreground: oklch(0.985 0.001 106.423);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0.001 106.423);
+  --sidebar-accent: oklch(0.268 0.007 34.298);
+  --sidebar-accent-foreground: oklch(0.985 0.001 106.423);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.553 0.013 58.071);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Make sure these are defined with !important to override any conflicting styles */
+  .bg-gradient-light {
+    background: linear-gradient(0deg, #eae6ff, #eae6ff),
+      linear-gradient(1.44deg, #ffffff 1.23%, rgba(255, 255, 255, 0) 135.76%) !important;
+  }
+
+  .bg-gradient-dark {
+    background: linear-gradient(0deg, #161226, #161226),
+      linear-gradient(1.45deg, #161226 11.31%, rgba(22, 18, 38, 0) 274.68%) !important;
+  }
 }
