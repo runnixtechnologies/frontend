@@ -21,14 +21,14 @@ export default function HeroSection() {
       className="w-full min-h-[519px] relative xl:pt-10 pb-15"
       aria-label="Hero section"
     >
-      <div className="relative z-10 w-full h-full px-4 xl:px-[128px]">
+      <div className="relative z-10 w-full h-full px-4 2xl:px-[60px] 3xl:px-[128px]">
         <div className="w-full flex flex-col xl:flex-row items-center gap-[14px] xl:gap-[114px]">
           {/* Left Section - Text */}
           <div
             className="w-full xl:w-1/2 flex flex-col gap-[27px] justify-center items-center 2xl:justify-start 2xl:items-start relative"
             data-aos="fade-right"
             data-aos-duration="800"
-            data-aos-delay="100"
+            data-aos-delay="500"
             data-aos-offset="200"
           >
             <div

@@ -14,10 +14,10 @@ const images = [
 export default function SmartDeliverySection() {
   return (
     <section className="w-full min-h-[656px] relative dark:bg-[#161226] bg-[#F7F6FC] pt-12 pb-4 xl:py-20 px-4 sm:px-6 md:px-10 xl:px-[128px]">
-      <div className="w-full flex flex-col xl:flex-row items-center gap-6 xl:gap-[114px]">
+      <div className="w-full flex flex-col xl:flex-row items-center gap-6 xl:gap-[96px] 3xl:gap-[114px]">
         {/* Left Section - Slider */}
         <div
-          className="w-full max-w-[552px] h-[320px] sm:h-[400px] md:h-[496px] rounded-3xl overflow-hidden"
+          className="w-full lg:w-[552px] h-[320px] sm:h-[400px] md:h-[496px] rounded-3xl overflow-hidden"
           data-aos="fade-right"
           data-aos-duration="800"
           data-aos-delay="200"
@@ -39,6 +39,7 @@ export default function SmartDeliverySection() {
                   src={img}
                   alt="Runnix delivery service"
                   fill
+                  quality={80}
                   className="w-full h-full object-cover object-center rounded-[24px] bg-[#D9D9D9]"
                 />
               </SwiperSlide>
@@ -54,7 +55,7 @@ export default function SmartDeliverySection() {
           data-aos-delay="200"
           data-aos-offset="200"
         >
-          <span className="w-fit h-fit py-2 px-3  xl:px-5 rounded-[24px] bg-[#E5E0F4] text-sm sm:text-sm xl:text-lg leading-7 font-figtree font-semibold text-primary">
+          <span className="w-fit  py-2 px-3  xl:px-5 rounded-[24px] bg-[#E5E0F4] text-sm sm:text-sm xl:text-lg leading-7 font-figtree font-semibold text-primary">
             Deliver smarter, track better, and pay securely
           </span>
 

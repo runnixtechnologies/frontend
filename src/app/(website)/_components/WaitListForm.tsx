@@ -40,15 +40,15 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { socials } from "@/lib/data"
+import { useAddToWaitlistMutation } from "@/lib/redux/api/waitlistApi"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { DialogClose } from "@radix-ui/react-dialog"
 import { X } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { useAddToWaitlistMutation } from "@/lib/redux/api/waitlistApi"
 import { toast } from "sonner"
+import { z } from "zod"
 
 // Define the form schema with Zod
 const formSchema = z.object({
@@ -58,7 +58,7 @@ const formSchema = z.object({
   email: z.string().email({
     message: "Please enter a valid email address.",
   }),
-  role: z.enum(["merchant", "agent", "rider"], {
+  role: z.enum(["merchant", "user", "rider"], {
     required_error: "Please select a role.",
   }),
 })
@@ -67,7 +67,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>
 
 const labelStyle = `font-bold font-figtree text-base text-[#232323] leading-[120%] -tracking-[2%]`
-const inputStyle = `w-full h-[54px] font-normal font-figtree text-base leading-[120%] -tracking-[2%] border border-solid outline-none focus:outline-none border-[#E5E7EB] hover:border-[#7F5BAE] focus:border-[#7F5BAE] rounded-xl p-4 bg-[#EFEFEF] text-[#232323] placeholder:capitalize placeholder:text-[#989898]`
+const inputStyle = `w-full h-[54px] font-normal font-figtree text-base leading-[120%] -tracking-[2%] border border-solid outline-none focus:outline-none focus:border-0 focus:shadow-none border-[#E5E7EB] hover:border-[#7F5BAE] focus:border-[#7F5BAE] rounded-xl p-4 bg-[#EFEFEF] text-[#232323] placeholder:capitalize placeholder:text-[#989898]`
 
 export default function WaitlistForm() {
   const [open, setOpen] = useState(true)
@@ -92,9 +92,14 @@ export default function WaitlistForm() {
       await addToWaitlist(data).unwrap()
       setSubmittedData(data)
       setIsSubmitted(true)
+      form.reset()
     } catch (error) {
-      console.log(error)
-      toast("Failed to submit waitlist form")
+      toast.error("Failed to submit waitlist form", {
+        description:
+          "Please try again later or contact support if the issue persists.",
+        duration: 5000,
+      })
+      console.error("Waitlist submission error:", error)
     }
   }
   return (
@@ -238,7 +243,7 @@ export default function WaitlistForm() {
                           </FormControl>
                           <SelectContent className="font-figtree">
                             <SelectItem value="merchant">Merchant</SelectItem>
-                            <SelectItem value="users">Agent</SelectItem>
+                            <SelectItem value="users">User</SelectItem>
                             <SelectItem value="rider">Rider</SelectItem>
                           </SelectContent>
                         </Select>

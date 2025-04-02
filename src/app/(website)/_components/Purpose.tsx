@@ -63,6 +63,7 @@ export default function OurPurposeSection() {
                     src={img}
                     alt="Runnix purpose"
                     fill
+                    quality={80}
                     className="object-cover"
                   />
                 </SwiperSlide>
@@ -139,6 +140,7 @@ export default function OurPurposeSection() {
                     src={img}
                     alt="Runnix purpose"
                     fill
+                    quality={80}
                     className="object-cover"
                   />
                 </SwiperSlide>

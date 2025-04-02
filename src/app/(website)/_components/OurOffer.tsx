@@ -1,14 +1,16 @@
 "use client"
 
-import { OfferImage3, OfferImage4 } from "@/components/svgs/offer_imgs"
-import { OfferImage1 } from "@/components/svgs/offer_imgs/offer_img-1"
-import { OfferImage2 } from "@/components/svgs/offer_imgs/offer_img-2"
+import Image from "next/image"
+
+// import { OfferImage3, OfferImage4 } from "@/components/svgs/offer_imgs"
+// import { OfferImage1 } from "@/components/svgs/offer_imgs/offer_img-1"
+// import { OfferImage2 } from "@/components/svgs/offer_imgs/offer_img-2"
 
 interface OfferProps {
   id: number
   title: string
   description: string
-  img: React.ReactNode
+  img: string
 }
 
 const offers: OfferProps[] = [
@@ -16,33 +18,33 @@ const offers: OfferProps[] = [
     id: 1,
     title: "Real-time Tracking",
     description: "Know where your package is, always.",
-    img: <OfferImage1 />,
+    img: "/offer-img_1.svg",
   },
   {
     id: 2,
     title: "Local Business Support",
     description: "Helping businesses of all sizes deliver better.",
-    img: <OfferImage2 />,
+    img: "/offer-img_2.svg",
   },
   {
     id: 3,
     title: "Transparent Pricing",
     description: "No hidden fees, just fair rates.",
-    img: <OfferImage3 />,
+    img: "/offer-img_3.svg",
   },
   {
     id: 4,
     title: "Verified Agents",
     description: "Only trusted, vetted delivery personnel.",
-    img: <OfferImage4 />,
+    img: "/offer-img_4.svg",
   },
 ]
 
 export default function OurOfferSection() {
   return (
-    <section className="w-full min-h-[539px] relative ∏dark:bg-[#1D192B] bg-white flex justify-center items-center px-4 sm:px-6 md:px-10 xl:px-30 py-16 sm:pt-20 sm:pb:30">
+    <section className="w-full min-h-[539px] relative dark:bg-[#1D192B] bg-white flex justify-center items-center px-4 sm:px-6 md:px-10 xl:px-30 py-16 sm:pt-20 sm:pb:30">
       <div
-        className="w-full max-w-[1200px] flex flex-col gap-12 items-center xl:items-start"
+        className="w-full flex flex-col gap-12 items-center justify-center xl:items-start"
         data-aos="fade-up"
       >
         <h4 className="w-full text-center xl:text-left font-figtree font-bold text-xl sm:text-2xl md:text-3xl xl:text-4xl 2xl:text-5xl leading-snug dark:text-white text-black">
@@ -55,7 +57,15 @@ export default function OurOfferSection() {
               key={item.id}
               className="flex flex-col items-center xl:items-start text-center xl:text-left gap-3"
             >
-              {item.img}
+              {/* {item.img} */}
+              <Image
+                src={item.img}
+                alt="offer image"
+                width={148}
+                height={148}
+                quality={80}
+                className="w-[120px] h-[120px] xl:w-[148px] xl:h-[148px]"
+              />
               <div className="flex flex-col gap-2">
                 <h3 className="text-lg sm:text-xl font-bold font-figtree dark:text-white text-black">
                   {item.title}

@@ -39,23 +39,38 @@ export default function LandingRootLayoutWrapper({
   return (
     <div className="relative w-full min-h-screen overflow-hidden">
       {mounted && (
-        <div
-          className={`absolute inset-0 z-0 ${
-            resolvedTheme === "dark" ? "bg-gradient-dark" : "bg-gradient-light"
-          }`}
-        ></div>
+        <>
+          <div className="hidden xl:block absolute inset-0 h-full xl:h-screen z-1">
+            <Image
+              src={
+                resolvedTheme === "dark"
+                  ? "/images/dark-hero_img.webp"
+                  : "/images/light-hero_img.webp"
+              }
+              alt="Map background"
+              fill
+              className="object-cover"
+              priority
+              quality={80}
+            />
+          </div>
+          <div className="block xl:hidden absolute inset-0 h-full xl:h-screen z-1">
+            <Image
+              src={
+                resolvedTheme === "dark"
+                  ? "/images/small-dark-hero_img.webp"
+                  : "/images/small-light-hero_bg.webp"
+              }
+              alt="Map background for small screen"
+              fill
+              className="object-cover"
+              priority
+              quality={80}
+            />
+          </div>
+        </>
       )}
-      <div className="absolute inset-0 h-full xl:h-screen opacity-5 z-10">
-        <Image
-          src="/images/hero_bg-img.webp"
-          alt="Map background"
-          fill
-          className="object-cover"
-          priority
-          quality={80}
-        />
-      </div>
-      <div className="relative z-20 flex flex-col min-h-screen">
+      <div className="relative z-10 flex flex-col min-h-screen">
         <Header />
         <main className="flex-grow">{children}</main>
         <Footer />

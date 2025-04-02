@@ -1,9 +1,10 @@
+import { ThemeProvider } from "@/components/theme-provider"
+import { Toaster } from "@/components/ui/sonner"
+import { ReduxProvider } from "@/lib/redux/provider"
 import type { Metadata } from "next"
 import { Figtree } from "next/font/google"
-import { ThemeProvider } from "@/components/theme-provider"
+import React from "react"
 import "./globals.css"
-import { ReduxProvider } from "@/lib/redux/provider"
-import { Toaster } from "@/components/ui/sonner"
 
 const figtree = Figtree({
   variable: "--font-figtree",
@@ -24,17 +25,19 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${figtree.variable} antialiased`}>
-        <ReduxProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-            <Toaster />
-          </ThemeProvider>
-        </ReduxProvider>
+        <React.Suspense fallback={<div>Loading...</div>}>
+          <ReduxProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              {children}
+              <Toaster />
+            </ThemeProvider>
+          </ReduxProvider>
+        </React.Suspense>
       </body>
     </html>
   )

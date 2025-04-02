@@ -4,7 +4,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 type WaitlistFormData = {
   name: string
   email: string
-  role: "merchant" | "agent" | "rider"
+  role: "merchant" | "user" | "rider"
 }
 
 // Create the API slice

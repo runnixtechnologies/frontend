@@ -1,7 +1,28 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
-  /* config options here */
-};
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "runnix-africa.vercel.app",
+        port: "",
+        pathname: "/images/**",
+      },
+      {
+        protocol: "https",
+        hostname: "runnix-africa.vercel.app",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "http",
+        hostname: "localhost:**",
+        port: "",
+        pathname: "/images/**",
+      },
+    ],
+  },
+}
 
-export default nextConfig;
+export default nextConfig

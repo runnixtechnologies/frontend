@@ -10,6 +10,7 @@ import Link from "next/link"
 import { FC } from "react"
 import WaitListButton from "./WaitListButton"
 import { socials } from "@/lib/data"
+import DarkBgLogo from "@/components/svgs/dark_bg-logo"
 
 export const Header: FC = () => {
   return (
@@ -18,7 +19,8 @@ export const Header: FC = () => {
         <div className="w-full max-w-[1440px] mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0">
           {/* Logo */}
           <Link href="/" className="w-fit">
-            <AppLogo className="w-[114px] h-[36px] sm:w-[130px] md:w-[153px] sm:h-[40px] md:h-[48px]" />
+            <AppLogo className="dark:hidden w-[114px] h-[36px] sm:w-[130px] md:w-[153px] sm:h-[40px] md:h-[48px]" />
+            <DarkBgLogo className="dark:block hidden w-[114px] h-[36px] sm:w-[130px] md:w-[153px] sm:h-[40px] md:h-[48px]" />
           </Link>
 
           {/* Right Section */}

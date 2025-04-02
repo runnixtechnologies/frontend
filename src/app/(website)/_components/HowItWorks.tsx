@@ -41,11 +41,11 @@ export default function HowItWorksSection() {
   return (
     <section className="w-full min-h-[539px] relative dark:bg-[#161226] bg-[#F7F6FC] flex justify-center items-center py-16 sm:py-20 xl:pb-30">
       <div className="w-full flex flex-col gap-[48px]" data-aos="fade-up">
-        <div className="w-full max-w-[1200px] flex flex-col gap-12 items-center xl:items-start px-4 sm:px-6 md:px-8 xl:px-30">
+        <div className="w-full flex flex-col gap-12 items-center xl:items-start px-4 sm:px-6 md:px-8 2xl:px-20 3xl:px-30">
           <h2 className="w-full text-center xl:text-left font-figtree font-bold text-xl sm:text-2xl md:text-3xl xl:text-4xl 2xl:text-5xl leading-snug dark:text-white text-black">
             How Runnix Works
           </h2>
-          <div className="w-full flex flex-wrap md:flex-nowrap gap-6 xl:gap-[48px]">
+          <div className="w-full flex flex-col lg:flex-row justify-between items-center gap-6 xl:gap-[48px]">
             {data?.map((item) => (
               <div
                 key={item.id}
@@ -58,7 +58,7 @@ export default function HowItWorksSection() {
                     </span>
                     {item.title}
                   </h3>
-                  <p className="text-sm lg:text-base dark:text-[#DCDCDC] text-[#656565] max-w-[273px]">
+                  <p className="text-sm lg:text-base dark:text-[#DCDCDC] text-[#656565]">
                     {item.description}
                   </p>
                 </div>
@@ -66,7 +66,7 @@ export default function HowItWorksSection() {
             ))}
           </div>
         </div>
-        <div className="w-full px-4 sm:px-6 md:pl-8 md:pr-0 xl:pl-32 xl:pr-0">
+        <div className="w-full px-4 sm:px-6 md:pl-8 md:pr-0 xl:pl-20 3xl:pl-30 xl:pr-0">
           <div className="w-full h-auto">
             <Swiper
               loop
@@ -109,6 +109,7 @@ export default function HowItWorksSection() {
                     alt="how it works pictures"
                     width={552}
                     height={496}
+                    quality={80}
                     className="w-full h-[300px] sm:h-[400px] md:h-[450px] lg:h-[496px] rounded-[24px] object-cover object-center"
                   />
                 </SwiperSlide>
