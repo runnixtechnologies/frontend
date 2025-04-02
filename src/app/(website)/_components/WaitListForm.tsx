@@ -67,7 +67,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>
 
 const labelStyle = `font-bold font-figtree text-base text-[#232323] leading-[120%] -tracking-[2%]`
-const inputStyle = `w-full h-[54px] font-normal font-figtree text-base leading-[120%] -tracking-[2%] border border-solid outline-none focus:outline-none focus:border-0 focus:shadow-none border-[#E5E7EB] hover:border-[#7F5BAE] focus:border-[#7F5BAE] rounded-xl p-4 bg-[#EFEFEF] text-[#232323] placeholder:capitalize placeholder:text-[#989898]`
+const inputStyle = `w-full h-[54px] font-normal font-figtree text-base leading-[120%] -tracking-[2%] border border-solid outline-none focus:outline-none focus:border-0 ring-0 focus:ring-0 focus:shadow-none border-[#E5E7EB] hover:border-[#7F5BAE] focus:border-[#7F5BAE] rounded-xl p-4 bg-[#EFEFEF] text-[#232323] placeholder:capitalize placeholder:text-[#989898]`
 
 export default function WaitlistForm() {
   const [open, setOpen] = useState(true)
@@ -94,12 +94,12 @@ export default function WaitlistForm() {
       setIsSubmitted(true)
       form.reset()
     } catch (error) {
+      console.log("error", error)
       toast.error("Failed to submit waitlist form", {
         description:
           "Please try again later or contact support if the issue persists.",
         duration: 5000,
       })
-      console.error("Waitlist submission error:", error)
     }
   }
   return (
@@ -256,7 +256,7 @@ export default function WaitlistForm() {
                   <Button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full h-[54px] py-4 px-5 rounded-xl bg-[#7F5BAE] hover:bg-[#6a4c93] font-figtree font-bold text-xl leading-[120%] -tracking-[2%] text-white"
+                    className="w-full h-[54px] py-4 px-5 rounded-xl bg-[#7F5BAE] hover:bg-[#6a4c93] font-figtree font-bold text-base leading-[120%] -tracking-[2%] text-white"
                   >
                     {isLoading ? "Submitting..." : "Join Waitlist"}
                   </Button>

@@ -14,7 +14,7 @@ const images = [
 export default function SmartDeliverySection() {
   return (
     <section className="w-full min-h-[656px] relative dark:bg-[#161226] bg-[#F7F6FC] pt-12 pb-4 xl:py-20 px-4 sm:px-6 md:px-10 xl:px-[128px]">
-      <div className="w-full flex flex-col xl:flex-row items-center gap-6 xl:gap-[96px] 3xl:gap-[114px]">
+      <div className="w-full 2xl:w-[1200px] 3xl:w-[1400px] flex flex-col xl:flex-row justify-center items-center gap-6 xl:gap-[96px] 3xl:gap-[114px]">
         {/* Left Section - Slider */}
         <div
           className="w-full lg:w-[552px] h-[320px] sm:h-[400px] md:h-[496px] rounded-3xl overflow-hidden"

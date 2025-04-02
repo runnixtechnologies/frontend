@@ -44,7 +44,7 @@ export default function OurOfferSection() {
   return (
     <section className="w-full min-h-[539px] relative dark:bg-[#1D192B] bg-white flex justify-center items-center px-4 sm:px-6 md:px-10 xl:px-30 py-16 sm:pt-20 sm:pb:30">
       <div
-        className="w-full flex flex-col gap-12 items-center justify-center xl:items-start"
+        className="w-full 2xl:w-[1200px] 3xl:w-[1400px] flex flex-col gap-12 items-center justify-center xl:items-start"
         data-aos="fade-up"
       >
         <h4 className="w-full text-center xl:text-left font-figtree font-bold text-xl sm:text-2xl md:text-3xl xl:text-4xl 2xl:text-5xl leading-snug dark:text-white text-black">
@@ -67,7 +67,7 @@ export default function OurOfferSection() {
                 className="w-[120px] h-[120px] xl:w-[148px] xl:h-[148px]"
               />
               <div className="flex flex-col gap-2">
-                <h3 className="text-lg sm:text-xl font-bold font-figtree dark:text-white text-black">
+                <h3 className="text-lg lg:text-xl font-bold font-figtree dark:text-white text-black">
                   {item.title}
                 </h3>
                 <p className="text-sm lg:text-base dark:text-[#DCDCDC] text-[#626A62] max-w-[273px]">

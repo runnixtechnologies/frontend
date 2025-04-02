@@ -35,10 +35,10 @@ export default function OurPurposeSection() {
   return (
     <section className="w-full  min-h-[656px] relative py-12 dark:bg-[#1D192B] bg-white">
       <div
-        className="w-full h-full px-4 sm:px-6 md:px-10 lg:px-14 xl:px-[128px]"
+        className="w-full h-full flex justify-center items-center px-4 sm:px-6 md:px-10 lg:px-14 xl:px-[128px]"
         data-aos="fade-up"
       >
-        <div className="w-full flex flex-col xl:flex-row gap-6 lg:gap-8 xl:gap-10 2xl:gap-12">
+        <div className="w-full 2xl:w-[1200px] 3xl:w-[1400px] flex flex-col xl:flex-row gap-6 lg:gap-8 xl:gap-10 2xl:gap- 3xl:gap-[96px]">
           {/* Left Section - Image Slider - Large screens */}
           <div
             className="hidden lg:flex w-full xl:w-[552px] h-[400px] lg:h-[500px] xl:h-[607px] rounded-3xl overflow-hidden"
@@ -80,7 +80,7 @@ export default function OurPurposeSection() {
             data-aos-offset="200"
           >
             <div className="w-full flex flex-col gap-6 xl:py-12">
-              <div className="w-full flex flex-col gap-4 text-left">
+              <div className="w-full h-[44px] flex flex-col gap-4 text-left">
                 <h1 className="font-figtree font-bold text-xl sm:text-2xl md:text-3xl xl:text-4xl 2xl:text-5xl leading-[120%] dark:text-white text-black">
                   Built for Local Business and Small Enterprises!
                 </h1>

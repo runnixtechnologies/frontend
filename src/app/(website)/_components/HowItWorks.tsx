@@ -45,7 +45,7 @@ export default function HowItWorksSection() {
           <h2 className="w-full text-center xl:text-left font-figtree font-bold text-xl sm:text-2xl md:text-3xl xl:text-4xl 2xl:text-5xl leading-snug dark:text-white text-black">
             How Runnix Works
           </h2>
-          <div className="w-full flex flex-col lg:flex-row justify-between items-center gap-6 xl:gap-[48px]">
+          <div className="w-full 2xl:w-[1200px] 3xl:w-[1400px] flex flex-col lg:flex-row justify-between items-center gap-6 xl:gap-[48px]">
             {data?.map((item) => (
               <div
                 key={item.id}
