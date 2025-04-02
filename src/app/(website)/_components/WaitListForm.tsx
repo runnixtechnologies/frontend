@@ -58,7 +58,7 @@ const formSchema = z.object({
   email: z.string().email({
     message: "Please enter a valid email address.",
   }),
-  role: z.enum(["merchant", "user", "rider"], {
+  role: z.enum(["merchant", "users", "rider"], {
     required_error: "Please select a role.",
   }),
 })
@@ -242,8 +242,8 @@ export default function WaitlistForm() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent className="font-figtree">
-                            <SelectItem value="merchant">Merchant</SelectItem>
                             <SelectItem value="users">User</SelectItem>
+                            <SelectItem value="merchant">Merchant</SelectItem>
                             <SelectItem value="rider">Rider</SelectItem>
                           </SelectContent>
                         </Select>

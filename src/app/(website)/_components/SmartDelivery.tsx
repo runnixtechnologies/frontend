@@ -38,9 +38,10 @@ export default function SmartDeliverySection() {
                 <Image
                   src={img}
                   alt="Runnix delivery service"
-                  fill
+                  width={552}
+                  height={496}
                   quality={80}
-                  className="w-full h-full object-cover object-center rounded-[24px] bg-[#D9D9D9]"
+                  className="w-full md:w-[390px] h-[480px] xl:w-[552px] xl:h-[496px] object-cover rounded-[24px] bg-[#D9D9D9]"
                 />
               </SwiperSlide>
             ))}

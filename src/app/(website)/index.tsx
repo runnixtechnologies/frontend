@@ -51,7 +51,7 @@ export default function LandingRootLayoutWrapper({
               fill
               className="object-cover"
               priority
-              quality={80}
+              quality={20}
             />
           </div>
           <div className="block xl:hidden absolute inset-0 h-full xl:h-screen z-1">
@@ -65,7 +65,7 @@ export default function LandingRootLayoutWrapper({
               fill
               className="object-cover"
               priority
-              quality={80}
+              quality={20}
             />
           </div>
         </>
