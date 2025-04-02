@@ -11,7 +11,7 @@ type WaitlistFormData = {
 export const waitlistApi = createApi({
   reducerPath: "waitlistApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://runnix.africa/api/",
+    baseUrl: "https://api.runnix.africa/api/",
   }),
   endpoints: (builder) => ({
     addToWaitlist: builder.mutation<
