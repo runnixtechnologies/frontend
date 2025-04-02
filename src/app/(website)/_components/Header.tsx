@@ -26,7 +26,7 @@ export const Header: FC = () => {
           {/* Right Section */}
           <div className="w-fit flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8">
             {/* Social Medias */}
-            <div className="hidden sm-md:flex items-center gap-4 sm:gap-6">
+            <div className="hidden lg:flex items-center gap-4 sm:gap-6">
               {socials?.map((social, index) => (
                 <Link
                   key={index}

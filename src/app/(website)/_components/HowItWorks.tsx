@@ -39,7 +39,7 @@ const images: string[] = [
 
 export default function HowItWorksSection() {
   return (
-    <section className="w-full min-h-[539px] relative dark:bg-[#161226] bg-[#F7F6FC] flex justify-center items-center py-16 sm:py-20 xl:pb-30">
+    <section className="w-full min-h-[539px] relative dark:bg-[#161226] bg-[#F7F6FC] flex justify-center items-center py-12 sm:py-20 xl:pb-30">
       <div className="w-full flex flex-col gap-[48px]" data-aos="fade-up">
         <div className="w-full flex flex-col gap-12 items-center xl:items-start px-4 sm:px-6 md:px-8 2xl:px-20 3xl:px-30">
           <h2 className="w-full text-center xl:text-left font-figtree font-bold text-xl sm:text-2xl md:text-3xl xl:text-4xl 2xl:text-5xl leading-snug dark:text-white text-black">
@@ -66,7 +66,7 @@ export default function HowItWorksSection() {
             ))}
           </div>
         </div>
-        <div className="w-full px-4 sm:px-6 md:pl-8 md:pr-0 xl:pl-20 3xl:pl-30 xl:pr-0">
+        <div className="w-full px-2 sm:px-4 md:pl-8 md:pr-0 xl:pl-20 3xl:pl-30 xl:pr-0">
           <div className="w-full h-auto">
             <Swiper
               loop
@@ -76,13 +76,13 @@ export default function HowItWorksSection() {
               autoplay={{ delay: 2500, disableOnInteraction: false }}
               breakpoints={{
                 320: {
-                  slidesPerView: 1.1,
+                  slidesPerView: 1,
                 },
                 390: {
-                  slidesPerView: 1.2,
+                  slidesPerView: 1.05,
                 },
                 428: {
-                  slidesPerView: 1.3,
+                  slidesPerView: 1.1,
                 },
                 640: {
                   slidesPerView: 1.5,

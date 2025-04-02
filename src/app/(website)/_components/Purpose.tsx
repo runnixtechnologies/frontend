@@ -38,7 +38,7 @@ export default function OurPurposeSection() {
         className="w-full h-full flex justify-center items-center px-4 sm:px-6 md:px-10 lg:px-14 xl:px-[128px]"
         data-aos="fade-up"
       >
-        <div className="w-full 2xl:w-[1200px] 3xl:w-[1400px] flex flex-col xl:flex-row gap-6 lg:gap-8 xl:gap-10 2xl:gap- 3xl:gap-[96px]">
+        <div className="w-full 2xl:w-[1200px] 3xl:w-[1400px] flex flex-col xl:flex-row gap-6 lg:gap-8 xl:gap-10 2xl:gap-12">
           {/* Left Section - Image Slider - Large screens */}
           <div
             className="hidden lg:flex w-full xl:w-[552px] h-[400px] lg:h-[500px] xl:h-[607px] rounded-3xl overflow-hidden"
@@ -58,13 +58,17 @@ export default function OurPurposeSection() {
               className="w-full h-full"
             >
               {images.map((img, idx) => (
-                <SwiperSlide key={"img-" + idx} className="w-full h-full">
+                <SwiperSlide
+                  key={"img-" + idx}
+                  className="w-full h-full px-10 rounded-2xl"
+                >
                   <Image
                     src={img}
                     alt="Runnix purpose"
-                    fill
+                    width={552}
+                    height={607}
                     quality={80}
-                    className="object-cover"
+                    className="w-[552px] h-[607px] object-contain"
                   />
                 </SwiperSlide>
               ))}
@@ -110,7 +114,7 @@ export default function OurPurposeSection() {
                 ))}
               </div>
 
-              <div className="mt-6">
+              <div className="my-4">
                 <WaitListButton />
               </div>
             </div>
@@ -135,13 +139,14 @@ export default function OurPurposeSection() {
               className="w-full h-full"
             >
               {images.map((img, idx) => (
-                <SwiperSlide key={"img-" + idx} className="w-full h-full">
+                <SwiperSlide key={"img-" + idx} className="w-full h-full py-0">
                   <Image
                     src={img}
                     alt="Runnix purpose"
-                    fill
+                    width={552}
+                    height={607}
                     quality={80}
-                    className="object-cover"
+                    className="w-[346.81px] h-[381.36px] object-contain"
                   />
                 </SwiperSlide>
               ))}
