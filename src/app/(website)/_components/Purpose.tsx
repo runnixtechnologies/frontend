@@ -80,7 +80,7 @@ export default function OurPurposeSection() {
             data-aos-offset="200"
           >
             <div className="w-full flex flex-col gap-6 xl:py-12">
-              <div className="w-full h-[44px] flex flex-col gap-4 text-left">
+              <div className="w-full flex flex-col gap-4 text-left">
                 <h1 className="font-figtree font-bold text-xl sm:text-2xl md:text-3xl xl:text-4xl 2xl:text-5xl leading-[120%] dark:text-white text-black">
                   Built for Local Business and Small Enterprises!
                 </h1>
