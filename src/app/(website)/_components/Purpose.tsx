@@ -35,7 +35,7 @@ export default function OurPurposeSection() {
   return (
     <section className="w-full  min-h-[656px] relative py-12 dark:bg-[#1D192B] bg-white">
       <div
-        className="w-full h-full flex justify-center items-center px-4 sm:px-6 md:px-10 lg:px-14 xl:px-[128px]"
+        className="w-full h-full flex justify-center items-center px-4 sm:px-6 md:px-10 lg:px-10 xl:px-10 2xl:px-[128px]"
         data-aos="fade-up"
       >
         <div className="w-full 2xl:w-[1200px] 3xl:w-[1400px] flex flex-col xl:flex-row gap-6 lg:gap-8 xl:gap-10 2xl:gap-12">
@@ -60,7 +60,7 @@ export default function OurPurposeSection() {
               {images.map((img, idx) => (
                 <SwiperSlide
                   key={"img-" + idx}
-                  className="w-full h-full px-10 rounded-2xl"
+                  className="w-full h-full rounded-2xl"
                 >
                   <Image
                     src={img}
@@ -85,7 +85,7 @@ export default function OurPurposeSection() {
           >
             <div className="w-full flex flex-col gap-6 xl:py-12">
               <div className="w-full flex flex-col gap-4 text-left">
-                <h1 className="font-figtree font-bold text-xl sm:text-2xl md:text-3xl xl:text-4xl 2xl:text-5xl leading-[120%] dark:text-white text-black">
+                <h1 className="font-figtree font-bold text-xl md:text-2xl xl:text-3xl 2xl:text-5xl leading-[120%] dark:text-white text-black">
                   Built for Local Business and Small Enterprises!
                 </h1>
                 <p className="text-sm lg:text-base md:text-lg xl:text-base 2xl:text-[20px] leading-[140%] dark:text-[#DCDCDC] text-[#626A62]">
@@ -113,7 +113,6 @@ export default function OurPurposeSection() {
                   </div>
                 ))}
               </div>
-
               <div className="my-4">
                 <WaitListButton />
               </div>
@@ -146,7 +145,7 @@ export default function OurPurposeSection() {
                     width={552}
                     height={607}
                     quality={80}
-                    className="w-[346.81px] h-[381.36px] object-contain"
+                    className="w-full h-full md:w-[346.81px] md:h-[381.36px] xl:w-[552px] xl:h-[607px] object-contain"
                   />
                 </SwiperSlide>
               ))}

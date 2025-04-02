@@ -21,7 +21,7 @@ export default function HeroSection() {
       className="w-full min-h-[519px] relative xl:pt-10 pb-15"
       aria-label="Hero section"
     >
-      <div className="relative z-10 w-ful h-full flex justify-center items-center  px-4 2xl:px-[60px] 3xl:px-[128px]">
+      <div className="relative z-10 w-ful h-full flex justify-center items-center px-4 xl:px-10 2xl:px-[60px] 3xl:px-[128px]">
         <div className="w-full 2xl:w-[1200px] 3xl:w-[1400px] flex flex-col xl:flex-row items-center gap-[14px] xl:gap-[114px]">
           {/* Left Section - Text */}
           <div
@@ -48,7 +48,7 @@ export default function HeroSection() {
                 One delivery at a time
               </span>
               <div className="w-full flex flex-col gap-4">
-                <h1 className="text-left font-figtree font-bold fold:text-xl text-3xl lg:text-6xl xl:text-3xl 2xl:text-5xl leading-[120%] text-black dark:text-white -tracking-[2%]">
+                <h1 className="text-left font-figtree font-bold fold:text-xl text-3xl lg:text-3xl xl:text-2xl 2xl:text-5xl leading-[120%] text-black dark:text-white -tracking-[2%]">
                   Runnix - Bringing Delivery Where It Matters
                 </h1>
                 <p className="text-left text-[17px] sm-md:text-lg xl:text-base 2xl:text-[20px] leading-[140%] font-figtree font-normal dark:text-[#DCDCDC] text-[#626A62]">

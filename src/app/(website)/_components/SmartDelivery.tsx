@@ -13,8 +13,8 @@ const images = [
 
 export default function SmartDeliverySection() {
   return (
-    <section className="w-full min-h-[656px] relative dark:bg-[#161226] bg-[#F7F6FC] pt-12 pb-4 xl:py-20 px-4 sm:px-6 md:px-10 xl:px-[128px]">
-      <div className="w-full 2xl:w-[1200px] 3xl:w-[1400px] flex flex-col xl:flex-row justify-center items-center gap-6 xl:gap-[96px] 3xl:gap-[114px]">
+    <section className="w-full min-h-[656px] relative dark:bg-[#161226] bg-[#F7F6FC] pt-12 pb-4 xl:py-20 px-4 sm:px-6 md:px-10 2xl:px-[128px]">
+      <div className="w-full 2xl:w-[1200px] 3xl:w-[1400px] flex flex-col xl:flex-row justify-center items-center gap-6 xl:gap-[50px] 2xl:gap-[96px] 3xl:gap-[114px]">
         {/* Left Section - Slider */}
         <div
           className="w-full lg:w-[552px] h-[320px] sm:h-[400px] md:h-[496px] rounded-3xl overflow-hidden"
@@ -56,11 +56,11 @@ export default function SmartDeliverySection() {
           data-aos-delay="200"
           data-aos-offset="200"
         >
-          <span className="w-fit  py-2 px-3  xl:px-5 rounded-[24px] bg-[#E5E0F4] text-sm sm:text-sm xl:text-lg leading-7 font-figtree font-semibold text-primary">
+          <span className="w-fit h-[44px] py-2 px-3  xl:px-5 rounded-[24px] bg-[#E5E0F4] text-sm sm:text-sm 2xl:text-lg leading-7 font-figtree font-semibold text-primary">
             Deliver smarter, track better, and pay securely
           </span>
 
-          <h1 className="font-figtree font-bold text-xl sm:text-2xl md:text-3xl xl:text-4xl 2xl:text-5xl leading-[120%] dark:text-white text-black">
+          <h1 className="font-figtree font-bold text-xl sm:text-2xl md:text-3xl xl:text-2xl 2xl:text-5xl leading-[120%] dark:text-white text-black">
             Deliveries That Work - <br className="hidden sm:inline" /> Anywhere
           </h1>
 

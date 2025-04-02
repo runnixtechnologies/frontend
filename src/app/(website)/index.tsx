@@ -22,11 +22,11 @@ export default function LandingRootLayoutWrapper({
 
   useEffect(() => {
     AOS.init({
-      duration: 600,
+      duration: 800,
       easing: "ease-in-out",
       once: false,
       offset: 100,
-      delay: 100,
+      delay: 200,
       mirror: false,
       anchorPlacement: "top-bottom",
     })
