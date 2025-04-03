@@ -13,8 +13,8 @@ const images = [
 
 export default function SmartDeliverySection() {
   return (
-    <section className="w-full min-h-[656px] relative dark:bg-[#161226] bg-[#F7F6FC] pt-12 pb-4 xl:py-20 px-4 sm:px-6 md:px-10 2xl:px-[128px]">
-      <div className="w-full 2xl:w-[1200px] 3xl:w-[1400px] flex flex-col xl:flex-row justify-center items-center gap-6 xl:gap-[50px] 2xl:gap-[96px] 3xl:gap-[114px]">
+    <section className="w-full min-h-[656px] relative dark:bg-[#161226] bg-[#F7F6FC] pt-12 pb-4 xl:py-20 px-4 sm:px-6 xl:px-0 flex justify-center items-center">
+      <div className="w-full 2xl:w-[1200px] 3xl:w-[1350px] 4xl:w-[1400px] flex flex-col lg:flex-row justify-center items-center lg:gap-6 xl:gap-[50px] 2xl:gap-[80px]">
         {/* Left Section - Slider */}
         <div
           className="w-full lg:w-[552px] h-[320px] sm:h-[400px] md:h-[496px] rounded-3xl overflow-hidden"
@@ -41,7 +41,7 @@ export default function SmartDeliverySection() {
                   width={552}
                   height={496}
                   quality={80}
-                  className="w-full md:w-[390px] h-[480px] xl:w-[552px] xl:h-[496px] object-cover rounded-[24px] bg-[#D9D9D9]"
+                  className="w-full md:w-[390px] h-[440px] xl:w-[552px] xl:h-[496px] object-cover rounded-[24px] bg-[#D9D9D9]"
                 />
               </SwiperSlide>
             ))}
@@ -56,7 +56,7 @@ export default function SmartDeliverySection() {
           data-aos-delay="200"
           data-aos-offset="200"
         >
-          <span className="w-fit h-[44px] py-2 px-3  xl:px-5 rounded-[24px] bg-[#E5E0F4] text-sm sm:text-sm 2xl:text-lg leading-7 font-figtree font-semibold text-primary">
+          <span className="w-fit h-[44px] py-2 px-3  fold:px-2 xl:px-5 rounded-[24px] bg-[#E5E0F4] text-sm sm:text-sm 2xl:text-lg leading-7 font-figtree font-semibold text-primary">
             Deliver smarter, track better, and pay securely
           </span>
 
@@ -64,7 +64,7 @@ export default function SmartDeliverySection() {
             Deliveries That Work - <br className="hidden sm:inline" /> Anywhere
           </h1>
 
-          <p className="text-sm md:text-base 2xl:text-[20px] leading-[140%] font-figtree dark:text-[#DCDCDC] text-[#626A62] max-w-[700px]">
+          <p className="w-full text-sm md:text-base 2xl:text-[20px] leading-[140%] font-figtree dark:text-[#DCDCDC] text-[#626A62] max-w-[552px]">
             Runnix is your go-to platform for effortless deliveries, designed to
             bring merchants, agents, and customers together on one seamless
             experience. Whether you&apos;re managing a business, handling

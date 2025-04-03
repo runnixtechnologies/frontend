@@ -21,11 +21,11 @@ export default function HeroSection() {
       className="w-full min-h-[519px] relative xl:pt-10 pb-15"
       aria-label="Hero section"
     >
-      <div className="relative z-10 w-ful h-full flex justify-center items-center px-4 xl:px-10 2xl:px-[60px] 3xl:px-[128px]">
-        <div className="w-full 2xl:w-[1200px] 3xl:w-[1400px] flex flex-col xl:flex-row items-center gap-[14px] xl:gap-[114px]">
+      <div className="relative z-10 w-ful h-full flex justify-center items-center px-4 lg:px-8 xl:px-10 2xl:px-[60px] 3xl:px-[118px]">
+        <div className="w-full 2xl:w-[1200px] 3xl:w-[1350px] 4xl:w-[1400px]  flex flex-col xl:flex-row items-center justify-center gap-[14px] xl:gap-[114px]">
           {/* Left Section - Text */}
           <div
-            className="w-full xl:w-1/2 flex flex-col gap-[27px] justify-center items-center 2xl:justify-start 2xl:items-start relative"
+            className="w-full xl:w-[836.41px] flex flex-col gap-[27px] justify-center items-center 2xl:justify-start 2xl:items-start relative"
             data-aos="fade-right"
             data-aos-duration="800"
             data-aos-delay="500"
@@ -48,10 +48,10 @@ export default function HeroSection() {
                 One delivery at a time
               </span>
               <div className="w-full flex flex-col gap-4">
-                <h1 className="text-left font-figtree font-bold fold:text-xl text-3xl lg:text-3xl xl:text-2xl 2xl:text-5xl leading-[120%] text-black dark:text-white -tracking-[2%]">
-                  Runnix - Bringing Delivery Where It Matters
+                <h1 className="w-full text-left font-figtree font-bold fold:text-xl text-3xl lg:text-5xl leading-[120%] text-black dark:text-white -tracking-[2%]">
+                  Runnix - Bringing Delivery <br /> Where It Matters
                 </h1>
-                <p className="text-left text-[17px] sm-md:text-lg xl:text-base 2xl:text-[20px] leading-[140%] font-figtree font-normal dark:text-[#DCDCDC] text-[#626A62]">
+                <p className="text-left text-[17px] sm-md:text-lg lg:text-[20px] leading-[140%] font-figtree font-normal dark:text-[#DCDCDC] text-[#626A62] max-w-[556.41px]">
                   No working delivery service in your area? Runnix is here to
                   change that! We provide reliable, real-time tracked
                   deliveries, secure payments, and complete transparency for

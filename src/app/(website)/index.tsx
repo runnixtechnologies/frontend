@@ -42,30 +42,32 @@ export default function LandingRootLayoutWrapper({
         <>
           <div className="hidden xl:block absolute inset-0 h-full xl:h-screen z-1">
             <Image
+              fill
+              priority
+              quality={20}
               src={
                 resolvedTheme === "dark"
                   ? "/images/dark-hero_img.webp"
                   : "/images/light-hero_img.webp"
               }
               alt="Map background"
-              fill
               className="object-cover"
-              priority
-              quality={20}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 60vw"
             />
           </div>
           <div className="block xl:hidden absolute inset-0 h-full xl:h-screen z-1">
             <Image
+              fill
+              priority
+              quality={20}
               src={
                 resolvedTheme === "dark"
                   ? "/images/small-dark-hero_img.webp"
                   : "/images/small-light-hero_bg.webp"
               }
               alt="Map background for small screen"
-              fill
               className="object-cover"
-              priority
-              quality={20}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 60vw, 50vw"
             />
           </div>
         </>

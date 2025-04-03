@@ -66,13 +66,24 @@ const formSchema = z.object({
 // Infer the type from the schema
 type FormValues = z.infer<typeof formSchema>
 
+// Define error response type
+interface ErrorResponse {
+  status?: number
+  data?: {
+    message?: string
+    error?: string
+  }
+  message?: string
+  error?: string
+}
+
 const labelStyle = `font-bold font-figtree text-base text-[#232323] leading-[120%] -tracking-[2%]`
 const inputStyle = `w-full h-[54px] font-normal font-figtree text-base leading-[120%] -tracking-[2%] border border-solid outline-none focus:outline-none focus:border-0 ring-0 focus:ring-0 focus:shadow-none border-[#E5E7EB] hover:border-[#7F5BAE] focus:border-[#7F5BAE] rounded-xl p-4 bg-[#EFEFEF] text-[#232323] placeholder:capitalize placeholder:text-[#989898]`
 
 export default function WaitlistForm() {
   const [open, setOpen] = useState(true)
   const [isSubmitted, setIsSubmitted] = useState(false)
-  const [submittedData, setSubmittedData] = useState<FormValues | null>(null)
+  const [emailExists, setEmailExists] = useState(false)
 
   // Initialize the form with react-hook-form and zod resolver
   const form = useForm<FormValues>({
@@ -88,20 +99,57 @@ export default function WaitlistForm() {
 
   // Handle form submission
   async function onSubmit(data: FormValues) {
+    // Reset email exists state
+    setEmailExists(false)
+
     try {
       await addToWaitlist(data).unwrap()
-      setSubmittedData(data)
       setIsSubmitted(true)
       form.reset()
-    } catch (error) {
-      console.log("error", error)
-      toast.error("Failed to submit waitlist form", {
-        description:
-          "Please try again later or contact support if the issue persists.",
-        duration: 5000,
-      })
+    } catch (error: unknown) {
+      const err = error as ErrorResponse
+
+      // Check if the error is about email already existing
+      const errorMessage =
+        err.data?.message ||
+        err.data?.error ||
+        err.message ||
+        err.error ||
+        "An error occurred"
+
+      if (
+        errorMessage.toLowerCase().includes("email already exists") ||
+        errorMessage.toLowerCase().includes("already registered") ||
+        errorMessage.toLowerCase().includes("email is already in use")
+      ) {
+        setEmailExists(true)
+        form.setError("email", {
+          type: "manual",
+          message: "This email is already on our waitlist.",
+        })
+      } else {
+        let message = "An error occurred"
+
+        if (err.message === "Network Error") {
+          message = "Please check your network connectivity"
+        } else if (err.data?.message) {
+          message = err.data.message
+        } else if (err.data?.error) {
+          message = err.data.error
+        } else if (err.message) {
+          message = err.message
+        } else if (err.error) {
+          message = err.error
+        }
+
+        toast.error("Failed to submit waitlist form", {
+          description: message,
+          duration: 5000,
+        })
+      }
     }
   }
+
   return (
     <div
       className="bg-[#7F5BAE] min-h-[792px] w-full relative py-8 sm:py-12 md:py-16 lg:py-24 xl:py-30"
@@ -115,7 +163,7 @@ export default function WaitlistForm() {
         }}
       ></div>
 
-      {isSubmitted && submittedData ? (
+      {isSubmitted ? (
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogContent className="bg-white dark:bg-white w-full md:w-[640px] flex justify-center items-center py-16 px-12 rounded-3xl">
             <DialogClose>
@@ -173,7 +221,7 @@ export default function WaitlistForm() {
               <CardTitle className="text-3xl leading-[120%] -tracking-[2%] font-bold font-figtree text-[#232323] text-center">
                 Join the Runnix Revolution
               </CardTitle>
-              <CardDescription className="text-base leading-[140%] -tracking-[2%] text-[#626A62] font-normal font-figtree text-center">
+              <CardDescription className="text-sm lg:text-base leading-[140%] -tracking-[2%] text-[#626A62] font-normal font-figtree text-center">
                 Sign up today and be among the first to experience the future of
                 logistics in underserved areas!
               </CardDescription>
@@ -208,13 +256,29 @@ export default function WaitlistForm() {
                         <FormLabel className={labelStyle}>Email</FormLabel>
                         <FormControl>
                           <Input
-                            className={inputStyle}
+                            className={`${inputStyle} ${
+                              emailExists
+                                ? "border-red-500 focus:border-red-500"
+                                : ""
+                            }`}
                             type="email"
                             placeholder="you@example.com"
                             {...field}
+                            onChange={(e) => {
+                              field.onChange(e)
+                              // Clear the email exists error when user types
+                              if (emailExists) {
+                                setEmailExists(false)
+                              }
+                            }}
                           />
                         </FormControl>
                         <FormMessage className="font-figtree" />
+                        {emailExists && (
+                          <p className="text-sm font-medium text-red-500 mt-1">
+                            This email is already on our waitlist.
+                          </p>
+                        )}
                       </FormItem>
                     )}
                   />

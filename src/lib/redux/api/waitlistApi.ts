@@ -20,7 +20,7 @@ export const waitlistApi = createApi({
     >({
       query: (formData) => {
         return {
-          url: "waiting_list",
+          url: "waiting_list.php",
           method: "POST",
           body: formData,
         }

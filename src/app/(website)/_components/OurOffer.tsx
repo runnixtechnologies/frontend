@@ -2,10 +2,6 @@
 
 import Image from "next/image"
 
-// import { OfferImage3, OfferImage4 } from "@/components/svgs/offer_imgs"
-// import { OfferImage1 } from "@/components/svgs/offer_imgs/offer_img-1"
-// import { OfferImage2 } from "@/components/svgs/offer_imgs/offer_img-2"
-
 interface OfferProps {
   id: number
   title: string
@@ -42,16 +38,16 @@ const offers: OfferProps[] = [
 
 export default function OurOfferSection() {
   return (
-    <section className="w-full min-h-[539px] relative dark:bg-[#1D192B] bg-white flex justify-center items-center px-4 sm:px-6 md:px-10 xl:px-30 py-16 sm:pt-20 sm:pb:30">
+    <section className="w-full min-h-[539px] relative dark:bg-[#1D192B] bg-white flex justify-center items-center px-4 sm:px-6 zxl:px-0 py-16 sm:pt-20 sm:pb:30">
       <div
-        className="w-full 2xl:w-[1200px] 3xl:w-[1400px] flex flex-col gap-12 items-center justify-center xl:items-start"
+        className="w-full 2xl:w-[1200px] 3xl:w-[1350px] 4xl:w-[1400px] flex flex-col gap-12 items-center justify-center xl:items-start"
         data-aos="fade-up"
       >
         <h4 className="w-full text-center xl:text-left font-figtree font-bold text-xl sm:text-2xl md:text-3xl xl:text-4xl 2xl:text-5xl leading-snug dark:text-white text-black">
           What we Offer?
         </h4>
 
-        <div className="w-full grid grid-cols-1 sm-md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="w-full grid grid-cols-1 sm-md:grid-cols-2 xl:grid-cols-4 gap-8">
           {offers.map((item) => (
             <div
               key={item.id}
