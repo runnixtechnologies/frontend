@@ -329,7 +329,7 @@ export default function WaitlistForm() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent className="font-figtree">
-                            <SelectItem value="users">User</SelectItem>
+                            <SelectItem value="user">User</SelectItem>
                             <SelectItem value="merchant">Merchant</SelectItem>
                             <SelectItem value="rider">Rider</SelectItem>
                           </SelectContent>
