@@ -20,7 +20,7 @@ export default function Footer() {
         <DarkBgLogo className="w-[100px] sm:w-[120px] xl:w-1[143px]" />
 
         {/* Copyright Large screens */}
-        <span className="hidden lg:flex text-[#989898] text-sm lg:text-base leading-snug tracking-normal font-normal font-figtree max-w-[345px]">
+        <span className="hidden lg:flex text-[#989898] text-sm lg:text-base leading-snug tracking-normal font-normal font-figtree max-w-[445px]">
           © {today.getFullYear()} Runnix Technologies. All rights reserved.
         </span>
 

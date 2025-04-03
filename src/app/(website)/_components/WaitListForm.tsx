@@ -103,9 +103,27 @@ export default function WaitlistForm() {
     setEmailExists(false)
 
     try {
-      await addToWaitlist(data).unwrap()
-      setIsSubmitted(true)
-      form.reset()
+      const response = await addToWaitlist(data).unwrap()
+      if (
+        response?.message
+          .toLowerCase()
+          .includes("email already exists in the database")
+      ) {
+        const options = {
+          duration: 5000,
+          description: response.message,
+          className: "light-toast",
+          style: {
+            color: "#ffffff",
+            background: "#cc0000",
+          },
+        }
+        setIsSubmitted(false)
+        toast.error("Failed to submit waitlist form", options)
+      } else {
+        setIsSubmitted(true)
+        form.reset()
+      }
     } catch (error: unknown) {
       const err = error as ErrorResponse
 
@@ -141,11 +159,16 @@ export default function WaitlistForm() {
         } else if (err.error) {
           message = err.error
         }
-
-        toast.error("Failed to submit waitlist form", {
-          description: message,
+        const options = {
           duration: 5000,
-        })
+          description: message,
+          className: "light-toast",
+          style: {
+            color: "#ffffff",
+            background: "#cc0000",
+          },
+        }
+        toast.error("Failed to submit waitlist form", options)
       }
     }
   }
