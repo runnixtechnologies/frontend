@@ -58,7 +58,7 @@ const formSchema = z.object({
   email: z.string().email({
     message: "Please enter a valid email address.",
   }),
-  role: z.enum(["merchant", "users", "rider"], {
+  role: z.enum(["merchant", "user", "rider"], {
     required_error: "Please select a role.",
   }),
 })
