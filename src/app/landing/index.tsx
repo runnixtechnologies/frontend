@@ -1,0 +1,63 @@
+"use client"
+import { useTheme } from "next-themes"
+import Image from "next/image"
+import React, { useEffect, useState } from "react"
+import Footer from "./_components/Footer"
+import { Header } from "./_components/Header"
+
+export default function LandingRootLayoutWrapper({
+  children,
+}: Readonly<{
+  children: React.ReactNode
+}>) {
+  const { resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  return (
+    <div className="relative w-full min-h-screen overflow-hidden">
+      {mounted && (
+        <>
+          <div className="hidden xl:block absolute inset-0 h-full xl:h-screen z-1">
+            <Image
+              fill
+              priority
+              quality={20}
+              src={
+                resolvedTheme === "dark"
+                  ? "/images/dark-hero_img.webp"
+                  : "/images/light-hero_img.webp"
+              }
+              alt="Map background"
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 60vw"
+            />
+          </div>
+          <div className="block xl:hidden absolute inset-0 h-full xl:h-screen z-1">
+            <Image
+              fill
+              priority
+              quality={20}
+              src={
+                resolvedTheme === "dark"
+                  ? "/images/small-dark-hero_img.webp"
+                  : "/images/small-light-hero_bg.webp"
+              }
+              alt="Map background for small screen"
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 60vw, 50vw"
+            />
+          </div>
+        </>
+      )}
+      <div className="relative z-10 flex flex-col min-h-screen">
+        <Header />
+        <main className="flex-grow">{children}</main>
+        <Footer />
+      </div>
+    </div>
+  )
+}

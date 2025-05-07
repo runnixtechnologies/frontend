@@ -2,15 +2,23 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
 import { ReduxProvider } from "@/lib/redux/provider"
 import type { Metadata } from "next"
-import { Figtree } from "next/font/google"
+import { Figtree, Metrophobic } from "next/font/google"
 import React from "react"
+import AOSProvider from "./(provider)/aos-provider"
 import "./globals.css"
 
 const figtree = Figtree({
   variable: "--font-figtree",
   subsets: ["latin"],
+  display: "swap",
 })
 
+const metrophobic = Metrophobic({
+  weight: "400",
+  variable: "--font-metrophobic",
+  subsets: ["latin"],
+  display: "swap",
+})
 export const metadata: Metadata = {
   title: "One delivery at a time. | Runnix",
   description:
@@ -24,7 +32,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${figtree.variable} antialiased`}>
+      <body
+        className={`${figtree.variable} ${metrophobic.variable} antialiased`}
+      >
         <React.Suspense fallback={<div>Loading...</div>}>
           <ReduxProvider>
             <ThemeProvider
@@ -33,7 +43,7 @@ export default function RootLayout({
               enableSystem
               disableTransitionOnChange
             >
-              {children}
+              <AOSProvider>{children}</AOSProvider>
               <Toaster />
             </ThemeProvider>
           </ReduxProvider>

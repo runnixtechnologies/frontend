@@ -1,11 +1,9 @@
 "use client"
+import { useTheme } from "next-themes"
 import Image from "next/image"
 import React, { useEffect, useState } from "react"
 import Footer from "./_components/Footer"
 import { Header } from "./_components/Header"
-import { useTheme } from "next-themes"
-import AOS from "aos"
-import "aos/dist/aos.css"
 
 export default function LandingRootLayoutWrapper({
   children,
@@ -18,22 +16,6 @@ export default function LandingRootLayoutWrapper({
   // Only render gradient after component mounts to avoid hydration mismatch
   useEffect(() => {
     setMounted(true)
-  }, [])
-
-  useEffect(() => {
-    AOS.init({
-      duration: 800,
-      easing: "ease-in-out",
-      once: false,
-      offset: 100,
-      delay: 200,
-      mirror: false,
-      anchorPlacement: "top-bottom",
-    })
-    // Cleanup function to refresh AOS
-    return () => {
-      AOS.refresh()
-    }
   }, [])
 
   return (

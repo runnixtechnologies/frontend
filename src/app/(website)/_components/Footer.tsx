@@ -1,5 +1,6 @@
 "use client"
 import {
+  FaceBookAltIcon,
   InstagramAltIcon,
   LinkedinAltIcon,
   TiktokAltIcon,
@@ -20,7 +21,7 @@ export default function Footer() {
         <DarkBgLogo className="w-[100px] sm:w-[120px] xl:w-1[143px]" />
 
         {/* Copyright Large screens */}
-        <span className="hidden lg:flex text-[#989898] text-sm lg:text-base leading-snug tracking-normal font-normal font-figtree max-w-[445px]">
+        <span className="hidden lg:flex text-[#989898] text-sm lg:text-base leading-[44px]g tracking-normal font-normal font-figtree max-w-[445px]">
           © {today.getFullYear()} Runnix Technologies. All rights reserved.
         </span>
 
@@ -57,6 +58,8 @@ export default function Footer() {
                   <TiktokAltIcon />
                 ) : social.name === "linkedin" ? (
                   <LinkedinAltIcon />
+                ) : social.name === "facebook" ? (
+                  <FaceBookAltIcon />
                 ) : null}
               </Link>
             ))}
@@ -78,12 +81,14 @@ export default function Footer() {
                 <TiktokAltIcon />
               ) : social.name === "linkedin" ? (
                 <LinkedinAltIcon />
+              ) : social.name === "facebook" ? (
+                <FaceBookAltIcon />
               ) : null}
             </Link>
           ))}
         </div>
         {/* Copyright */}
-        <span className="flex lg:hidden text-[#989898] text-sm lg:text-base leading-snug tracking-normal font-normal font-figtree max-w-[345px]">
+        <span className="flex lg:hidden text-[#989898] text-sm lg:text-base leading-[44px]g tracking-normal font-normal font-figtree max-w-[345px]">
           © {today.getFullYear()} Runnix Technologies. All rights reserved.
         </span>
       </div>

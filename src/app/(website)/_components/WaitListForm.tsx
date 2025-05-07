@@ -147,7 +147,6 @@ export default function WaitlistForm() {
         })
       } else {
         let message = "An error occurred"
-
         if (err.message === "Network Error") {
           message = "Please check your network connectivity"
         } else if (err.data?.message) {

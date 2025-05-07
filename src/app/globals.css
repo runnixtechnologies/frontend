@@ -49,6 +49,7 @@ body {
   --breakpoint-sm-md: 24.375rem; /* 390px / 16 = 24.375rem (iPhone 13, iPhone 14 Pro, iPhone 15, iPhone 16)*/
   --breakpoint-md: 26.75rem; /* 428px / 16 = 26.75rem (iPhone 6/7/8 Plus, iPhone XR/11, iPhone 13 Pro Max, iPhone 14 Plus, iPhone 15 Plus, iPhone 16 Plus)*/
   --breakpoint-lg: 40.8125rem; /* 653px / 16 = 40.8125rem (Galaxy Fold unfolded, iPad Mini in portrait)*/
+  --breakpoint-lg-md: 48rem; /* 768px / 16 = 40.8125rem (Galaxy Fold unfolded, iPad Mini in portrait)*/
   --breakpoint-xl: 64rem; /* 1024px / 16 = 64rem (iPad Pro 10.5", iPad Pro 12.9")*/
   --breakpoint-2xl: 80rem; /* 1280px / 16 = 80rem (small laptops, desktops)*/
   --breakpoint-3xl: 90rem; /* 1440px / 16 = 90rem (larger desktops)*/
@@ -148,4 +149,17 @@ body {
     background: linear-gradient(0deg, #161226, #161226),
       linear-gradient(1.45deg, #161226 11.31%, rgba(22, 18, 38, 0) 274.68%) !important;
   }
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll {
+  animation: scroll 30s linear infinite;
 }

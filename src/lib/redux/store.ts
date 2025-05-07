@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit"
 import { setupListeners } from "@reduxjs/toolkit/query"
 import { waitlistApi } from "./api/waitlistApi"
+import { contactApi } from "./api/contact"
 
 export const store = configureStore({
   reducer: {
     // Add the generated reducer as a specific top-level slice
+    [contactApi.reducerPath]: contactApi.reducer,
     [waitlistApi.reducerPath]: waitlistApi.reducer,
   },
   // Adding the api middleware enables caching, invalidation, polling,
