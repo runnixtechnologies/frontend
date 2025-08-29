@@ -20,7 +20,6 @@ import { notFound } from "next/navigation"
 import LeaveComment from "../_components/Comment"
 
 export const dynamicParams = true
-// ❗ Use a plain literal (no `as const`)
 export const revalidate = 3600
 
 type Params = { slug: string }
