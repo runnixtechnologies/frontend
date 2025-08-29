@@ -103,7 +103,7 @@ export default function ContactUs() {
                   </Link>
                 </div>
                 <div className="flex gap-2 items-center">
-                  <Location />
+                  <Location className="text-[#FF875C]" />
                   <Link
                     href={mapsUrl}
                     target="_blank"

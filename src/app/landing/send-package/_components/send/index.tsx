@@ -6,7 +6,7 @@ import PackageInformation from "./package-information"
 import PricingInformation from "./price"
 
 export default function SendPackage() {
-  const [currentStep, setCurrentStep] = useState(3)
+  const [currentStep, setCurrentStep] = useState(1)
 
   const nextStep = () => {
     setCurrentStep((prev) => Math.min(prev + 1, 3))
@@ -19,10 +19,10 @@ export default function SendPackage() {
       {currentStep === 1 && <PackageInformation nextStep={nextStep} />}
 
       {currentStep === 2 && (
-        <PricingInformation nextStep={nextStep} prevStep={previousStep} />
+        <ContactInformation nextStep={nextStep} prevStep={previousStep} />
       )}
 
-      {currentStep === 3 && <ContactInformation prevStep={previousStep} />}
+      {currentStep === 3 && <PricingInformation prevStep={previousStep} />}
     </div>
   )
 }

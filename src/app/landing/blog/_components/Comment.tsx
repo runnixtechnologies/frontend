@@ -1,5 +1,9 @@
 "use client"
 
+import { useState, useTransition } from "react"
+import { z } from "zod"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { MessageIcon } from "@/components/svgs"
 import { Button } from "@/components/ui/button"
 import {
@@ -18,162 +22,154 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { DialogTitle } from "@radix-ui/react-dialog"
 import { X } from "lucide-react"
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
+import { toast } from "sonner"
 
-// Define the form schema with Zod
-const formSchema = z.object({
-  name: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
-  }),
-  email: z.string().email({
-    message: "Please enter a valid email address.",
-  }),
-  comment: z.string().min(2, {
-    message: "Comment must be at least 2 characters.",
-  }),
+/* -------------------------------------------------------------------------- */
+/*  Zod schema                                                                */
+/* -------------------------------------------------------------------------- */
+const schema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Please enter a valid email"),
+  comment: z.string().min(2, "Comment must be at least 2 characters"),
 })
 
-// Infer the type from the schema
-type FormValues = z.infer<typeof formSchema>
+type FormValues = z.infer<typeof schema>
 
-export default function LeaveComment() {
+/* -------------------------------------------------------------------------- */
+/*  Component                                                                 */
+/* -------------------------------------------------------------------------- */
+interface LeaveCommentProps {
+  slug: string
+}
+
+export default function LeaveComment({ slug }: LeaveCommentProps) {
   const [open, setOpen] = useState(false)
+  const [pending, start] = useTransition()
   const [emailExists, setEmailExists] = useState(false)
 
-  // Initialize the form with react-hook-form and zod resolver
   const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      comment: "",
-    },
+    resolver: zodResolver(schema),
+    defaultValues: { name: "", email: "", comment: "" },
   })
 
-  // Handle form submission
-  async function onSubmit(data: FormValues) {
-    console.log("data", data)
+  async function postComment(values: FormValues) {
+    const res = await fetch("/api/comments", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...values, slug }),
+    })
+    if (res.status === 201) {
+      toast.success("Comment submitted successfully")
+      form.reset()
+      setOpen(false)
+    } else if (res.status === 409) {
+      setEmailExists(true)
+    } else {
+      const { message } = await res.json()
+      toast.error(message || "Something went wrong")
+    }
+  }
+
+  function onSubmit(values: FormValues) {
+    start(() => postComment(values))
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          variant="ghost"
-          className="p-0 cursor-pointer hover:bg-transparent"
-        >
-          <MessageIcon className="dark:text-white text-[#232323" />
+        <Button variant="ghost" className="p-0 hover:bg-transparent">
+          <MessageIcon className="text-[#232323] dark:text-white" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-white dark:bg-[#161226] w-[calc(100%-24px)] max-w-[90vw] xs:max-w-[85vw] md:max-w-[640px] h-auto max-h-[90vh] xs:max-h-[85vh] sm:max-h-[650px] overflow-y-auto grid grid-cols-1 py-6 px-0 sm:p-6 xs:p-8 md:p-9 gap-[16px] xs:gap-[20px] sm:gap-[24px] shadow-[0px_12px_30px_0px_#0000001A] xs:shadow-[0px_16px_40px_0px_#0000001A] sm:shadow-[0px_22px_49px_0px_#0000001A]">
-        <DialogTitle className="flex flex-col gap-1">
-          <span className="font-figtree font-bold text-[28px]/[120%] dark:text-[#DCDCDC] text-[#232323]">
+
+      <DialogContent className="bg-white dark:bg-[#161226] w-[90vw] max-w-md sm:max-w-lg overflow-y-auto p-6 xs:p-8 space-y-6 shadow-lg">
+        <DialogTitle className="space-y-1">
+          <span className="font-figtree font-bold text-2xl dark:text-[#DCDCDC]">
             Leave a Comment
           </span>
-          <span className="font-figtree font-normal text-[16px]/[140%] dark:text-[#DCDCDC] text-[#525252]">
+          <span className="font-figtree text-sm text-[#525252] dark:text-[#DCDCDC]">
             Your email address will not be published. Required fields are
             marked.
           </span>
         </DialogTitle>
-        <DialogClose className="absolute right-2 xs:right-4 top-2 md:top-4 bg-white dark:bg-[#161226] flex justify-center items-center cursor-pointer z-10">
-          <X className="dark:text-white text-[#202426] w-6 h-6 xs:w-[30px] xs:h-[30px] md:w-[36px] md:h-[36px]" />
+
+        <DialogClose className="absolute right-4 top-4 rounded-full p-1 hover:bg-muted">
+          <X className="h-6 w-6 text-[#202426] dark:text-white" />
           <span className="sr-only">Close</span>
         </DialogClose>
 
-        <div className="w-full flex flex-col gap-[16px] xs:gap-[20px] sm:gap-[24px] justify-center items-center">
-          <div className="w-full flex flex-col gap-[20px] xs:gap-[28px] sm:gap-[36px]">
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)}>
-                <div className="space-y-5">
-                  {/* Comment */}
-                  <FormField
-                    control={form.control}
-                    name="comment"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Your Comment</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Enter your comment"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+            <FormField
+              control={form.control}
+              name="comment"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Your Comment</FormLabel>
+                  <FormControl>
+                    <Textarea placeholder="Enter your comment" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Full Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Jane Doe" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email Address</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="email"
+                        placeholder="you@example.com"
+                        className={emailExists ? "border-red-500" : ""}
+                        {...field}
+                        onChange={(e) => {
+                          field.onChange(e)
+                          if (emailExists) setEmailExists(false)
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                    {emailExists && (
+                      <p className="text-sm text-red-500 mt-1">
+                        This email already commented.
+                      </p>
                     )}
-                  />
-                  <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {/* Name */}
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Full Name</FormLabel>
-                          <FormControl>
-                            <Input placeholder="enter your name" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                  </FormItem>
+                )}
+              />
+            </div>
 
-                    {/* Email */}
-                    <FormField
-                      control={form.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email Address</FormLabel>
-                          <FormControl>
-                            <Input
-                              className={`${
-                                emailExists
-                                  ? "border-red-500 focus:border-red-500"
-                                  : ""
-                              }`}
-                              type="email"
-                              placeholder="you@example.com"
-                              {...field}
-                              onChange={(e) => {
-                                field.onChange(e)
-                                // Clear the email exists error when user types
-                                if (emailExists) {
-                                  setEmailExists(false)
-                                }
-                              }}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                          {emailExists && (
-                            <p className="text-sm font-normal font-figtree text-red-500 mt-1">
-                              This email is already on our waitlist.
-                            </p>
-                          )}
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
-
-                {/* Submit */}
-                <div className="mt-[36px]">
-                  <Button
-                    type="submit"
-                    className="w-full h-[46px] py-3 px-5 rounded-xl bg-[#7F5BAE] hover:bg-[#6a4c93] font-figtree font-bold text-base leading-[120%] -tracking-[2%] text-white"
-                  >
-                    Send Comment <MessageIcon />
-                  </Button>
-                </div>
-              </form>
-            </Form>
-          </div>
-        </div>
+            <Button
+              type="submit"
+              className="w-full bg-[#7F5BAE] hover:bg-[#6a4c93] text-white"
+              disabled={pending}
+            >
+              {pending ? "Sending…" : "Send Comment"}{" "}
+              <MessageIcon className="ml-2" />
+            </Button>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   )

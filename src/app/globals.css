@@ -73,7 +73,7 @@ body {
   --accent: oklch(0.97 0.001 106.424);
   --accent-foreground: oklch(54.51% 0.1296 302.32);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(54.51% 0.1296 302.32);
+  --border: oklch(1 0 0);
   --input: oklch(54.51% 0.1296 302.32);
   --ring: oklch(0.709 0.01 56.259);
   --chart-1: oklch(0.646 0.222 41.116);
@@ -141,8 +141,7 @@ body {
 
   /* Make sure these are defined with !important to override any conflicting styles */
   .bg-gradient-light {
-    background: linear-gradient(0deg, #eae6ff, #eae6ff),
-      linear-gradient(1.44deg, #ffffff 1.23%, rgba(255, 255, 255, 0) 135.76%) !important;
+    background: #f7f9fa !important;
   }
 
   .bg-gradient-dark {

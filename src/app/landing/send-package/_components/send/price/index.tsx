@@ -1,30 +1,22 @@
 "use client"
 
 import {
-  AddCardIcon,
   AngleBack,
   ExpressDeliveryIcon,
   LocationCheckedIcon,
-  MasterCardType,
   StandardDeliveryIcon,
-  WalletIcon,
 } from "@/components/svgs"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { ChevronRight } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 
 interface PricingPaymentProps {
-  nextStep: () => void
   prevStep: () => void
 }
 
-export default function PricingPayment({
-  nextStep,
-  prevStep,
-}: PricingPaymentProps) {
+export default function PricingPayment({ prevStep }: PricingPaymentProps) {
   return (
     <div className="space-y-6">
       <Link
@@ -80,7 +72,7 @@ export default function PricingPayment({
           </div>
 
           <div className="flex items-start">
-            <div className="-ml-3 mr-1">
+            <div className="-ml-[3px]mr-1">
               <LocationCheckedIcon />
             </div>
             <div>
@@ -224,77 +216,8 @@ export default function PricingPayment({
             </div>
           </RadioGroup>
         </div>
-
-        {/* Payment Method */}
-        <div className="space-y-3">
-          <h3 className="font-figtree font-medium text-[14px]/[120%] text-[#232323] tracking-normal">
-            Select Delivery Vehicle
-          </h3>
-          <RadioGroup defaultValue="wallet" className="space-y-3">
-            <div className="relative">
-              <RadioGroupItem
-                value="wallet"
-                id="wallet"
-                className="peer sr-only"
-              />
-              <Label
-                htmlFor="wallet"
-                className="flex items-center justify-between p-4 border-b border-x-0 border-t-0 cursor-pointer peer-data-[state=checked]:border-[#EFEFEF]"
-              >
-                <div className="flex items-center gap-2">
-                  <WalletIcon />
-                  <div>
-                    <p className="font-medium text-[16px]/[140%] text-[#232323] tracking-normal">
-                      Wallet (₦12,030 balance)
-                    </p>
-                  </div>
-                </div>
-                <div className="h-4 w-4 rounded-full border border-primary flex items-center justify-center peer-data-[state=checked]:bg-[#E5E0F4]">
-                  <div className="h-[10px] w-[10px] rounded-full bg-primary"></div>
-                </div>
-              </Label>
-              <div className="mt-2 ml-6">
-                <Button className="h-[25px] py-1 px-3 bg-primary hover:bg-primary text-white text-[14px]/[140%] font-semibold font-figtree rounded-[25px] cursor-pointer">
-                  Top-up Wallet
-                </Button>
-              </div>
-            </div>
-
-            <div className="relative">
-              <RadioGroupItem value="card" id="card" className="peer sr-only" />
-              <Label
-                htmlFor="card"
-                className="flex items-center justify-between p-4 border-b border-x-0 border-t-0  cursor-pointer peer-data-[state=checked]:border-[#EFEFEF]"
-              >
-                <div className="flex items-center gap-2">
-                  <MasterCardType />
-
-                  <div>
-                    <p className="font-medium text-[16px]/[140%] text-[#232323] tracking-normal">
-                      •••• 8796
-                    </p>
-                  </div>
-                </div>
-                <div className="h-4 w-4 rounded-full border border-gray-300 flex items-center justify-center peer-data-[state=checked]:bg-primary">
-                  <div className="h-2.5 w-2.5 rounded-full bg-white"></div>
-                </div>
-              </Label>
-            </div>
-
-            <Button
-              variant="ghost"
-              className="w-full flex items-center justify-start font-medium text-[16px]/[140%] text-[#232323] tracking-normal py-3 cursor-pointer"
-            >
-              <AddCardIcon />
-              Add debit/credit card
-              <ChevronRight className="w-5 h-5 ml-auto" />
-            </Button>
-          </RadioGroup>
-        </div>
-
         {/* Next Button */}
         <Button
-          onClick={nextStep}
           type="submit"
           className="w-full h-[46px] py-3 px-5 rounded-xl bg-[#7F5BAE] hover:bg-[#6a4c93] font-figtree font-bold text-base leading-[120%] -tracking-[2%] text-white"
         >

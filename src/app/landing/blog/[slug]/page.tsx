@@ -1,9 +1,10 @@
 import {
-  ContentfulAsset,
-  ContentfulBlogPost,
+  type ContentfulAsset,
+  type ContentfulBlogPost,
   fetchGraphQL,
   GET_BLOG_POSTS,
   getAllSlugs,
+  getCommentsBySlug,
   getPostBySlug,
 } from "@/lib/contentful"
 import {
@@ -19,67 +20,21 @@ import { notFound } from "next/navigation"
 import LeaveComment from "../_components/Comment"
 
 export const dynamicParams = true
-export const revalidate = 3600 // every hour
+// ❗ Use a plain literal (no `as const`)
+export const revalidate = 3600
 
 type Params = { slug: string }
 
-const comments = [
-  {
-    name: "Aisha Abdulkadir",
-    content:
-      "Eget aenean vulputate nunc sed mi. At diam diam arcu euismod nisl convallis mattis.",
-    date: "26/04/2025",
-  },
-  {
-    name: "Reedon Hasheema",
-    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    date: "20/04/2025",
-  },
-]
-
+/* ────────────────────────────────────────────────────────────────────────── */
+/*  Static params & metadata                                                 */
+/* ────────────────────────────────────────────────────────────────────────── */
 export async function generateStaticParams(): Promise<{ slug: string }[]> {
   const slugs = await getAllSlugs()
   return slugs.map((slug) => ({ slug }))
 }
 
-// export async function generateMetadata({
-//   params,
-// }: {
-//   params: Params
-// }): Promise<Metadata> {
-//   const { slug } = await params
-//   const post = await getPostBySlug(slug)
-//   if (!post) return {}
-
-//   const imageUrl = post?.heroImage?.url?.startsWith("//")
-//     ? `https:${post?.heroImage.url}`
-//     : post?.heroImage?.url ?? "https://www.runnix.africa/default-heroImage.jpg"
-
-//   return {
-//     title: post.title,
-//     description: post.excerpt || `Blog post about ${post.title}`,
-//     openGraph: {
-//       title: post.title,
-//       description: post.excerpt || `Blog post about ${post.title}`,
-//       url: `https://www.runnix.africa/blog/${post.slug}`,
-//       images: [
-//         {
-//           url: imageUrl,
-//           width: 800,
-//           height: 600,
-//           alt: post?.heroImage?.description || post.title,
-//         },
-//       ],
-//     },
-//     twitter: {
-//       card: "summary_large_image",
-//       title: post.title,
-//       description: post.excerpt || `Blog post about ${post.title}`,
-//       images: [imageUrl],
-//     },
-//   }
-// }
 export async function generateMetadata({
+  // ❗ With dynamicIO, params is a Promise
   params,
 }: {
   params: Promise<Params>
@@ -110,20 +65,26 @@ export async function generateMetadata({
   }
 }
 
+/* ────────────────────────────────────────────────────────────────────────── */
+/*  Helper to fetch the four newest posts for "Explore More"                 */
+/* ────────────────────────────────────────────────────────────────────────── */
 async function getPosts(): Promise<ContentfulBlogPost[]> {
   try {
     const data = await fetchGraphQL<{
       blogPostCollection: { items: ContentfulBlogPost[] }
     }>(GET_BLOG_POSTS, undefined, ["blog-posts"])
-
-    return data?.blogPostCollection.items ?? []
-  } catch (error) {
-    console.error("Error fetching blog posts:", error)
+    return data.blogPostCollection.items
+  } catch (e) {
+    console.error("Error fetching blog posts", e)
     return []
   }
 }
 
+/* ────────────────────────────────────────────────────────────────────────── */
+/*  PAGE                                                                     */
+/* ────────────────────────────────────────────────────────────────────────── */
 export default async function BlogPostPage({
+  // ❗ With dynamicIO, params is a Promise
   params,
 }: {
   params: Promise<Params>
@@ -132,33 +93,35 @@ export default async function BlogPostPage({
   const post = await getPostBySlug(slug)
   if (!post) return notFound()
 
-  const posts = await getPosts()
-  const { json, links } = post.body
+  const [posts, comments] = await Promise.all([
+    getPosts(),
+    getCommentsBySlug(slug),
+  ])
 
+  const { json, links } = post.body
   const assetMap = new Map<string, ContentfulAsset>(
-    links?.assets?.block.map((asset) => [asset.sys.id, asset]) ?? []
+    links?.assets?.block.map((a) => [a.sys.id, a]) ?? []
   )
 
   const renderOptions: Options = {
     renderNode: {
       [BLOCKS.EMBEDDED_ASSET]: (node) => {
-        const assetId: string = node.data.target.sys.id
+        const assetId = node.data.target.sys.id as string
         const asset = assetMap.get(assetId)
         if (!asset) return null
-
-        const imageUrl = asset.url.startsWith("//")
+        const url = asset.url.startsWith("//")
           ? `https:${asset.url}`
           : asset.url
-        const altText = asset.description || asset.title || "Embedded image"
-
+        const alt = asset.description || asset.title || "Embedded image"
         return (
           <div className="my-6">
             <Image
-              src={imageUrl}
-              alt={altText}
+              src={url || "/placeholder.svg"}
+              alt={alt}
               width={asset.width || 800}
               height={asset.height || 450}
               className="object-cover rounded-md"
+              priority
             />
           </div>
         )
@@ -167,123 +130,106 @@ export default async function BlogPostPage({
   }
 
   return (
-    <>
-      <section className="w-full relative dark:bg-[#161226] bg-white/50 flex flex-col justify-center items-center py-10 lg:py-20 3xl:pb-30 gap-[48px]">
-        <div className="w-full xl:w-[800px] flex flex-col justify-center items-center gap-[48px] px-6 2xl:px-0">
-          <div className="w-full flex flex-col gap-[12px]">
-            <h1 className="dark:text-[#DCDCDC] text-[#232323] font-figtree font-bold text-[24px] xl:text-[48px] leading-[120%] -tracking-[2%]">
-              {post?.title}
-            </h1>
-            <div className="w-full h-[29px] lg:w-[448px] flex justify-between gap-6 font-figtree font-normal text-lg xl:text-[24px] leading-[120%] dark:text-[#DCDCDC] text-[#525252] -tracking-[2%]">
-              <span>{post?.author?.name ?? "Unknown Author"}</span>
-              <span>{moment(post?.publishDate).format("MMMM D, YYYY")}</span>
-            </div>
+    <section className="w-full relative dark:bg-[#161226] bg-white/50 flex flex-col items-center py-10 lg:py-20 gap-12">
+      {/* Header */}
+      <div className="w-full max-w-[800px] px-6 flex flex-col gap-12">
+        <div className="flex flex-col gap-3">
+          <h1 className="font-figtree text-[#232323] dark:text-[#DCDCDC] font-bold text-3xl xl:text-5xl leading-tight">
+            {post.title}
+          </h1>
+          <div className="flex justify-between text-lg xl:text-2xl text-[#525252] dark:text-[#DCDCDC]">
+            <span>{post.author?.name ?? "Unknown Author"}</span>
+            <span>{moment(post.publishDate).format("MMMM D, YYYY")}</span>
           </div>
         </div>
         {post.heroImage?.url && (
           <Image
             src={
-              post.heroImage?.url?.startsWith("//")
+              post.heroImage.url.startsWith("//")
                 ? `https:${post.heroImage.url}`
-                : post.heroImage?.url || "/placeholder.png"
+                : post.heroImage.url
             }
-            alt={post.heroImage?.description || "Blog image"}
+            alt={post.heroImage.description || "Blog image"}
             width={800}
             height={365}
-            className="object-cover"
+            className="object-cover rounded-md"
+            priority
           />
         )}
+      </div>
 
-        <div className="w-full flex flex-col justify-center items-center gap-6">
-          <div className="w-full flex flex-col justify-center items-center gap-6">
-            <div className="w-full xl:w-[800px] flex flex-col justify-center items-center gap-2 px-6 2xl:px-0">
-              <div className="w-full">
-                {documentToReactComponents(json, renderOptions)}
-              </div>
-            </div>
+      {/* Body */}
+      <article className="w-full max-w-[800px] px-6 prose dark:prose-invert">
+        {documentToReactComponents(json, renderOptions)}
+      </article>
+
+      {/* Comments */}
+      <section className="w-full bg-[#F9F9F9] dark:bg-[#1D192B] py-16 flex justify-center">
+        <div className="w-full max-w-[800px] px-6 flex flex-col gap-12">
+          <div className="flex justify-between items-center">
+            <h2 className="font-figtree font-bold text-2xl text-[#232323] dark:text-[#DCDCDC]">
+              Comments
+            </h2>
+            <LeaveComment slug={post.slug} />
           </div>
-        </div>
-
-        <div className="w-full flex flex-col justify-center items-center gap-6 dark:bg-[#1D192B] bg-[#F9F9F9] py-16">
-          <div className="w-full xl:w-[800px] flex flex-col justify-center items-center gap-[48px] px-6 2xl:px-0">
-            <div className="w-full flex justify-between gap-6">
-              <h4 className="font-figtree font-bold dark:text-[#DCDCDC] text-[#232323] text-[32px] leading-[120%] -tracking-[2%]">
-                Comments
-              </h4>
-              <LeaveComment />
-            </div>
-            {comments?.map((comment, index) => (
-              <div key={index} className="w-full flex flex-col gap-3">
-                <div className="w-full flex flex-col">
-                  <h4 className="font-figtree font-normal text-[18px]/[120%] dark:text-[#DCDCDC] text-[#17181A] -tracking-[2%]">
-                    {comment.name}
-                  </h4>
-                  <p className="font-figtree font-normal text-[16px]/[120%] dark:text-[#DCDCDC] text-[#5F6065] tracking-normal">
-                    {moment(comment.date, "DD/MM/YYYY")
-                      .startOf("day")
-                      .fromNow()}
-                  </p>
-                </div>
-                <p className="font-figtree font-normal text-[18px]/[140%] dark:text-[#DCDCDC] text-[#232323] tracking-normal">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec
-                  ligula nibh, interdum non enim sit amet, iaculis aliquet nunc.
-                </p>
+          {comments?.map((c) => (
+            <div key={c.sys.id} className="space-y-2">
+              <div>
+                <h4 className="font-semibold text-[#17181A] dark:text-[#DCDCDC]">
+                  {c.name}
+                </h4>
+                <time>{moment(c.postedAt).fromNow()}</time>
               </div>
-            ))}
-          </div>
+              <p>{c.message}</p>
+            </div>
+          ))}
+          {(comments?.length ?? 0) === 0 && (
+            <p>No comments yet — be the first!</p>
+          )}
         </div>
-        <div className="w-full flex flex-col justify-center items-center gap-6">
-          <div className="w-full xl:w-[800px] flex flex-col justify-center items-center gap-6 px-6 2xl:px-0">
-            <div className="w-full">
-              <h4 className="font-figtree font-bold dark:text-[#DCDCDC] text-[#232323] text-[32px] leading-[120%] -tracking-[2%]">
-                Explore More
-              </h4>
-            </div>
-            <div className="w-full gap-[36px] grid grid-cols-1 xl:grid-cols-2">
-              {posts
-                .filter((item) => item.slug !== post.slug)
-                .slice(0, 4)
-                .map((item) => {
-                  const heroImageUrl = item.heroImage?.url?.startsWith("//")
-                    ? `https:${item.heroImage.url}`
-                    : item.heroImage?.url || "/images/placeholder.png"
+      </section>
 
-                  return (
-                    <Link
-                      href={`/landing/blog/${item.slug}`}
-                      key={item.slug}
-                      className="bg-white flex flex-col gap-[20px] pt-4 pb-5 px-4 rounded-[16px] border border-[#E4E3E5] hover:scale-[1.01] transition-all duration-300 cursor-pointer"
-                    >
-                      <Image
-                        src={heroImageUrl}
-                        alt={item.heroImage?.description || item.title}
-                        width={338}
-                        height={240}
-                        className="w-full h-[240px] rounded-[8px] object-cover"
-                      />
-                      <h4 className="font-figtree font-bold text-[#232323] text-[20px] leading-[120%] -tracking-[2%]">
-                        {item.title}
-                      </h4>
-                      {item.excerpt && (
-                        <p className="font-metrophobic font-normal text-[16px] leading-[120%] text-[#7C7C7C] -tracking-[2%]">
-                          {item.excerpt}
-                        </p>
-                      )}
-                      <div className="w-full h-[20px] flex justify-between items-center">
-                        <p className="font-figtree font-semibold text-[14px]/[20px] text-[#232323] tracking-normal">
-                          {item.author?.name ?? "Unknown Author"}
-                        </p>
-                        <p className="font-figtree font-normal text-[14px]/[20px] text-[#7C7C7C] tracking-normal">
-                          {moment(item.publishDate).format("D MMM YYYY")}
-                        </p>
-                      </div>
-                    </Link>
-                  )
-                })}
-            </div>
+      {/* Explore more */}
+      <section className="w-full flex justify-center">
+        <div className="w-full max-w-[800px] px-6 flex flex-col gap-6">
+          <h2 className="font-figtree font-bold text-2xl text-[#232323] dark:text-[#DCDCDC]">
+            Explore More
+          </h2>
+          <div className="grid gap-9 sm:grid-cols-2">
+            {posts
+              .filter((p) => p.slug !== post.slug)
+              .slice(0, 4)
+              .map((p) => {
+                const img = p.heroImage?.url?.startsWith("//")
+                  ? `https:${p.heroImage.url}`
+                  : p.heroImage?.url || "/placeholder.png"
+                return (
+                  <Link
+                    href={`/landing/blog/${p.slug}`}
+                    key={p.slug}
+                    className="border border-[#E4E3E5] rounded-lg p-4 hover:scale-[1.01] transition-transform flex flex-col gap-4 bg-white"
+                  >
+                    <Image
+                      src={img || "/placeholder.svg"}
+                      alt={p.title}
+                      width={338}
+                      height={240}
+                      className="rounded"
+                    />
+                    <h3 className="font-bold text-[#232323]">{p.title}</h3>
+                    {p.excerpt && (
+                      <p className="text-[#7C7C7C] line-clamp-3">{p.excerpt}</p>
+                    )}
+                    <div className="flex justify-between text-sm text-[#7C7C7C]">
+                      <span>{p.author?.name ?? "Unknown Author"}</span>
+                      <span>{moment(p.publishDate).format("D MMM YYYY")}</span>
+                    </div>
+                  </Link>
+                )
+              })}
           </div>
         </div>
       </section>
-    </>
+    </section>
   )
 }

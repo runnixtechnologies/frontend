@@ -43,16 +43,6 @@ export const MainHeader: FC = () => {
               </Link>
             ))}
           </div>
-          {/* Right Section */}
-          {/* <div className="w-[193px] h-[35px]  hidden xl:flex  items-center gap-6">
-            <Link
-              href="/signin"
-              className="w-[51px] h-[22px] font-figtree font-bold text-[16px]/[140%] tracking-normal flex justify-center items-center text-black dark:text-white"
-            >
-              Sign In
-            </Link>
-            <TrackOrder />
-          </div> */}
           <div className="w-[333px] h-[35px]  hidden xl:flex  items-center gap-6">
             <Link
               href="/landing/send-package"
@@ -61,7 +51,7 @@ export const MainHeader: FC = () => {
               Send Package
             </Link>
             <Link
-              href="/signin"
+              href="/login"
               className="w-fit h-[22px] font-figtree font-bold text-[16px]/[140%] tracking-normal flex justify-center items-center text-black dark:text-white"
             >
               Login

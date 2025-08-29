@@ -21,9 +21,6 @@ export function MobileMenu({
     <div className="w-full h-full flex flex-col justify-between pb-30">
       <div className="w-full">
         {menu.map((item, index) => {
-          // If the menu item has sub-pages, render as accordion item
-
-          // If the menu item has no sub-pages, render as a direct link
           return (
             <div key={index} className="py-4 border-b">
               <Link

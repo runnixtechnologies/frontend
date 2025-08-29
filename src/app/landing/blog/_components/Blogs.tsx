@@ -25,7 +25,7 @@ export default async function BlogPosts() {
 
   if (!posts || posts.length === 0) {
     return (
-      <div className="text-center py-20">
+      <div className="text-center font-figtree font-normal text-base py-20">
         Failed to load blog posts. Please try again later.
       </div>
     )

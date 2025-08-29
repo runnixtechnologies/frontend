@@ -46,6 +46,7 @@ export default function BlogCards({ posts }: { posts: ContentfulBlogPost[] }) {
           width={338}
           height={240}
           className="w-full h-[240px] rounded-[8px] object-cover object-center"
+          priority
         />
         <h4 className="font-figtree font-bold text-[#232323] text-[20px] leading-[120%] -tracking-[2%]">
           {post.title}

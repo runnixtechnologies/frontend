@@ -54,7 +54,7 @@ export const Header: FC = () => {
               Send Package
             </Link>
             <Link
-              href="/signin"
+              href="/login"
               className="w-fit h-[22px] font-figtree font-bold text-[16px]/[140%] tracking-normal flex justify-center items-center text-black dark:text-white"
             >
               Login

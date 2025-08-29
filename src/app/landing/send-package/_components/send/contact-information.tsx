@@ -62,9 +62,11 @@ type FormValues = z.infer<typeof formSchema>
 
 interface PackageInformationProps {
   prevStep: () => void
+  nextStep: () => void
 }
 
 export default function PackageInformation({
+  nextStep = () => {},
   prevStep = () => {},
 }: PackageInformationProps) {
   // Initialize the form with react-hook-form and zod resolver
@@ -83,6 +85,7 @@ export default function PackageInformation({
   // Handle form submission
   async function onSubmit(data: FormValues) {
     console.log("Form data:", data)
+    nextStep()
   }
 
   return (
@@ -117,7 +120,7 @@ export default function PackageInformation({
                   <FormControl>
                     <Input
                       placeholder="Enter Receiver's Name"
-                      className="pl-10 py-6 focus:border-x-transparent focus:border-t-transparent border-0 border-b rounded-none focus:outline-none focus:ring-0 focus:border-b-2 hover:border-b hover:border-0 placeholder:text-[#BDBDBD]"
+                      className="pl-10 py-6 focus:border-x-transparent focus:border-t-transparent border-0 border-b rounded-none focus:outline-none focus:ring-0 focus:border-b-2 hover:border-0 hover:border-b placeholder:text-[#BDBDBD]"
                       {...field}
                     />
                   </FormControl>
@@ -155,7 +158,7 @@ export default function PackageInformation({
                         type="tel"
                         placeholder="xxx xxxx xxx"
                         {...field}
-                        className="pl-[110px] py-6 focus:border-x-transparent focus:border-t-transparent border-0 border-b rounded-none focus:outline-none focus:ring-0 focus:border-b-2 hover:border-b hover:border-0 placeholder:text-[#BDBDBD]"
+                        className="pl-[110px] py-6 focus:border-x-transparent focus:border-t-transparent border-0 border-b rounded-none focus:outline-none focus:ring-0 focus:border-b-2 hover:border-0 hover:border-b placeholder:text-[#BDBDBD]"
                       />
                     </FormControl>
                     <FormMessage />
@@ -182,7 +185,7 @@ export default function PackageInformation({
                   <FormControl>
                     <Input
                       placeholder="Enter Sender's Name"
-                      className="pl-10 py-6 focus:border-x-transparent focus:border-t-transparent border-0 border-b rounded-none focus:outline-none focus:ring-0 focus:border-b-2 hover:border-b hover:border-0 placeholder:text-[#BDBDBD]"
+                      className="pl-10 py-6 focus:border-x-transparent focus:border-t-transparent border-0 border-b rounded-none focus:outline-none focus:ring-0 focus:border-b-2 hover:border-0 hover:border-b placeholder:text-[#BDBDBD]"
                       {...field}
                     />
                   </FormControl>
@@ -220,7 +223,7 @@ export default function PackageInformation({
                         type="tel"
                         placeholder="xxx xxxx xxx"
                         {...field}
-                        className="pl-[110px] py-6 focus:border-x-transparent focus:border-t-transparent border-0 border-b rounded-none focus:outline-none focus:ring-0 focus:border-b-2 hover:border-b hover:border-0 placeholder:text-[#BDBDBD]"
+                        className="pl-[110px] py-6 focus:border-x-transparent focus:border-t-transparent border-0 border-b rounded-none focus:outline-none focus:ring-0 focus:border-b-2 hover:border-0 hover:border-b placeholder:text-[#BDBDBD]"
                       />
                     </FormControl>
                     <FormMessage />

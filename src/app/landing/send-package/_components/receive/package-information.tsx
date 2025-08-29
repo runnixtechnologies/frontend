@@ -63,7 +63,7 @@ export default function PackageInformation({
   return (
     <div className="space-y-6">
       <h1 className="text-2xl md:text-3xl font-bold text-[#36264F] mb-6">
-        Send a Package Anywhere
+        Receive a Package Anywhere
       </h1>
 
       <Form {...form}>
@@ -82,7 +82,7 @@ export default function PackageInformation({
                   <FormControl>
                     <Input
                       placeholder="Enter Pickup Address"
-                      className="pl-10 py-6 focus:border-x-transparent focus:border-t-transparent border-0 border-b rounded-none focus:outline-none focus:ring-0 focus:border-b-2 hover:border-b hover:border-0 placeholder:text-[#BDBDBD] "
+                      className="pl-10 py-6 focus:border-x-transparent focus:border-t-transparent border-0 border-b rounded-none focus:outline-none focus:ring-0 focus:border-b-2 hover:border-0 hover:border-b placeholder:text-[#BDBDBD] "
                       {...field}
                     />
                   </FormControl>
