@@ -3,7 +3,7 @@ import WebsiteRootLayout from "."
 
 export const metadata: Metadata = {
   title: "Home | Runnix",
-  description: "Runnix landing page",
+  description: "Runnix landing page. Your one to to all delivery in Nigeria",
 }
 
 export default function LandingRootLayout({
