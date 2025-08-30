@@ -149,7 +149,7 @@ export function RiderTable({ filters, data = [] }: RiderTableProps) {
                           />
                           <AvatarFallback>V</AvatarFallback>
                         </Avatar>
-                        <span className="font-figtree font-normal text-[12px]/[133%] -tracking-[2%]">
+                        <span className="font-figtree font-normal text-[12px]/[133%] -tracking-[2%] text-[#333333]">
                           {rider.name}
                         </span>
                       </div>
