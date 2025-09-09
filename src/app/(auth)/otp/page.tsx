@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowBack } from "@/components/svgs"
+import { useEffect, useMemo, useState, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { CardContent, CardFooter } from "@/components/ui/card"
 import { Form } from "@/components/ui/form"
@@ -10,43 +10,111 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp"
 import { zodResolver } from "@hookform/resolvers/zod"
-import Link from "next/link"
-import { useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
+import {
+  useVerifyOtpMutation,
+  useResendOtpMutation,
+} from "@/lib/redux/api/auth"
+import { getApiErrorMessage } from "@/lib/getApiErrorMessage"
 
-// Define the form schema with Zod
+// numeric 6-digit OTP only
 const formSchema = z.object({
-  otp: z.string().min(6, {
-    message: "OTP must be 6 digits.",
-  }),
+  otp: z.string().regex(/^\d{6}$/, "OTP must be 6 digits."),
 })
 
-// Infer the type from the schema
 type FormValues = z.infer<typeof formSchema>
 
-export default function LoginPage() {
+export default function OTPPage() {
   const search = useSearchParams()
-  const email = search.get("email")
+  const router = useRouter()
+
+  const email = search.get("e") ?? ""
+  const token = search.get("t") ?? ""
+
+  const [
+    verifyOtp,
+    { isLoading: isVerifying, error: verifyError, isError: verifyIsError },
+  ] = useVerifyOtpMutation()
+
+  const [
+    resendOtp,
+    { isLoading: isResending, error: resendError, isError: resendIsError },
+  ] = useResendOtpMutation()
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      otp: "",
-    },
+    defaultValues: { otp: "" },
+    mode: "onChange",
   })
 
-  async function onSubmit(data: FormValues) {
-    console.log("Submitted OTP:", data.otp)
+  // keep OTP numeric
+  const otpValue = form.watch("otp")
+  useEffect(() => {
+    const onlyDigits = otpValue.replace(/\D+/g, "").slice(0, 6)
+    if (onlyDigits !== otpValue) {
+      form.setValue("otp", onlyDigits, { shouldValidate: true })
+    }
+  }, [otpValue, form])
+
+  // resend cooldown (30s)
+  const COOLDOWN = 30
+  const [cooldown, setCooldown] = useState<number>(0)
+  useEffect(() => {
+    if (cooldown <= 0) return
+    const t = setInterval(() => setCooldown((c) => c - 1), 1000)
+    return () => clearInterval(t)
+  }, [cooldown])
+
+  const canSubmit = useMemo(
+    () =>
+      form.formState.isValid &&
+      !isVerifying &&
+      form.getValues("otp").length === 6,
+    [isVerifying, form]
+  )
+
+  const submitVerify = useCallback(
+    async (otp: string) => {
+      try {
+        // If your backend expects token (your current query string has ?t=)
+        await verifyOtp({ code: otp, token }).unwrap()
+
+        // If instead it expects email, use:
+        // await verifyOtp({ code: otp, channel: "email", email }).unwrap()
+
+        router.push("/auth/verified") // adjust destination
+      } catch (err) {
+        form.setError("otp", {
+          type: "server",
+          message: getApiErrorMessage(err),
+        })
+      }
+    },
+    [verifyOtp, token, router, form]
+  )
+
+  async function onSubmit(values: FormValues) {
+    await submitVerify(values.otp)
   }
+
+  async function handleResendOTP() {
+    try {
+      // If your backend resends via token:
+      await resendOtp({ token }).unwrap()
+      setCooldown(COOLDOWN)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const verifyErrText = verifyIsError ? getApiErrorMessage(verifyError) : null
+  const resendErrText = resendIsError ? getApiErrorMessage(resendError) : null
+  const missingIdentity = !email && !token
 
   return (
     <div className="w-full flex flex-col min-h-[80vh]">
-      <Link
-        href="/signup"
-        className="px-8 xl:px-20 font-figtree font-medium text-sm/[20px] hover:underline tracking-normal text-[#666666] flex items-center gap-1"
-      >
-        <ArrowBack /> Go back
-      </Link>
       <div className="w-full flex justify-center items-center">
         <div className="bg-white dark:bg-[#161226] w-full lg:w-[464px] overflow-y-auto grid grid-cols-1 py-6 xs:py-[32px] sm:py-[40px] md:py-[48px] px-[16px] xs:px-4 md:px-6 gap-[16px] xs:gap-[20px] sm:gap-6">
           <div className="w-full flex flex-col gap-2 mb-[24px]">
@@ -55,26 +123,21 @@ export default function LoginPage() {
             </span>
             <span className="font-figtree font-bold text-[16px]/[140%] tracking-normal text-[#525252] text-center">
               A 6-digit code was sent to{" "}
-              <span className="font-bold">{email}</span>{" "}
-              <Link
-                href="/landing/send-package/auth/signup"
-                className="text-primary"
-              >
-                Change Email Address
-              </Link>
-              <Link
-                href="/landing/send-package/auth/signup"
-                className="text-primary"
-              >
-                Sign up as a user
-              </Link>
+              <span className="font-bold text-primary">
+                {email || "your email"}
+              </span>
             </span>
+            {missingIdentity && (
+              <span className="text-amber-600 text-center text-sm">
+                Missing email/token in URL. Open the verification link again.
+              </span>
+            )}
           </div>
 
           <div className="w-full flex flex-col gap-[16px] xs:gap-[20px] sm:gap-6 justify-center items-center">
             <div className="w-full flex flex-col gap-[20px] xs:gap-[28px] sm:gap-[36px]">
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)}>
+                <form onSubmit={form.handleSubmit(onSubmit)} noValidate>
                   <CardContent className="space-y-4 xs:space-y-5 sm:space-y-6 p-0 xs:p-1 sm:p-2">
                     <Controller
                       name="otp"
@@ -85,6 +148,8 @@ export default function LoginPage() {
                             maxLength={6}
                             value={field.value}
                             onChange={field.onChange}
+                            // If your InputOTP supports onComplete, you can single-fire submit:
+                            // onComplete={(code) => submitVerify(code)}
                           >
                             <InputOTPGroup className="flex gap-2">
                               <InputOTPSlot index={0} />
@@ -95,33 +160,56 @@ export default function LoginPage() {
                               <InputOTPSlot index={5} />
                             </InputOTPGroup>
                           </InputOTP>
-                          {fieldState.error && (
+
+                          {(fieldState.error || verifyErrText) && (
                             <p className="text-sm text-red-500">
-                              {fieldState.error.message}
+                              {fieldState.error?.message ?? verifyErrText}
                             </p>
                           )}
                         </div>
                       )}
                     />
+
+                    {resendErrText && (
+                      <p className="text-sm text-red-500 text-center">
+                        {resendErrText}
+                      </p>
+                    )}
                   </CardContent>
 
                   <CardFooter className="flex flex-col gap-4 mt-4 xs:mt-5 sm:mt-6 p-0 xs:p-1 sm:p-2">
                     <Button
                       type="submit"
+                      disabled={!canSubmit || missingIdentity}
                       className="w-full h-[40px] xs:h-[45px] sm:h-[50px] md:h-[54px] py-3 xs:py-4 px-4 xs:px-5 rounded-lg xs:rounded-xl bg-[#7F5BAE] hover:bg-[#6a4c93] font-figtree font-bold text-sm xs:text-base leading-[120%] -tracking-[2%] text-white"
                     >
                       <span className="flex items-center gap-1 xs:gap-2">
-                        Verify Account
+                        {isVerifying ? "Verifying..." : "Verify Account"}
                       </span>
                     </Button>
+
                     <p className="font-figtree font-normal text-[14px]/[140%] tracking-normal text-[#525252] text-center">
                       Didn&apos;t receive code?{" "}
-                      <Link
-                        href="/landing/send-package/auth/signup"
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handleResendOTP}
+                        disabled={
+                          isResending || cooldown > 0 || missingIdentity
+                        }
                         className="text-primary font-bold"
+                        title={
+                          missingIdentity
+                            ? "Missing email/token for resend"
+                            : undefined
+                        }
                       >
-                        Resend OTP
-                      </Link>{" "}
+                        {cooldown > 0
+                          ? `Resend in ${cooldown}s`
+                          : isResending
+                          ? "Resending..."
+                          : "Resend OTP"}
+                      </Button>
                     </p>
                   </CardFooter>
                 </form>

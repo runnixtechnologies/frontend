@@ -38,7 +38,7 @@ export function MobileMenu({
       </div>
       <div className="w-full flex flex-col gap-[12px]">
         <Link
-          href="/signin"
+          href="/login"
           className="w-full h-[22px]  flex justify-center items-center  font-figtree font-bold text-[16px]/[140%] tracking-normal text-black dark:text-white"
         >
           Sign In

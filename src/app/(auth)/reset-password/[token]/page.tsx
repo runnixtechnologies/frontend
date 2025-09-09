@@ -11,47 +11,70 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useRouter } from "next/navigation"
+import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import { useResetPasswordMutation } from "@/lib/redux/api/auth"
+import { getApiErrorMessage } from "@/lib/getApiErrorMessage"
 
-// Define the form schema with Zod
+// Zod schema
 const formSchema = z
   .object({
-    password: z.string().min(6, {
-      message: "Password must be at least 6 characters.",
-    }),
-    confirmPassword: z.string().min(6, {
-      message: "Confirm password must be at least 6 characters.",
-    }),
+    password: z
+      .string()
+      .min(6, { message: "Password must be at least 6 characters." }),
+    confirmPassword: z
+      .string()
+      .min(6, { message: "Confirm password must be at least 6 characters." }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     path: ["confirmPassword"],
     message: "Passwords do not match.",
   })
 
-// Infer the type from the schema
 type FormValues = z.infer<typeof formSchema>
 
-export default function UserSignupPage() {
+export default function ResetPasswordPage() {
   const router = useRouter()
+  const params = useParams()
+  const searchParams = useSearchParams()
 
-  // Initialize the form with react-hook-form and zod resolver
+  // Support both /reset-password/[token] and /reset-password?token=...
+  const token =
+    (params?.token as string | undefined) ??
+    (searchParams.get("token") || undefined)
+
+  const [resetPassword, { isLoading, isError, error, data }] =
+    useResetPasswordMutation()
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      password: "",
-      confirmPassword: "",
-    },
+    defaultValues: { password: "", confirmPassword: "" },
+    mode: "onTouched",
   })
 
-  // Handle form submission
-  async function onSubmit(data: FormValues) {
-    console.log("data", data)
-    if (data) {
-      router.push(`/login`)
+  async function onSubmit(values: FormValues) {
+    if (!token) {
+      form.setError("password", {
+        type: "manual",
+        message: "Invalid or missing reset token.",
+      })
+      return
     }
+    try {
+      await resetPassword({
+        token,
+        password: values.password,
+        passwordConfirmation: values.confirmPassword,
+      }).unwrap()
+
+      router.push("/login")
+    } catch {}
   }
+
+  const apiError =
+    getApiErrorMessage(error) ??
+    (isError ? "Failed to reset password. Try again." : null)
 
   return (
     <div className="w-full flex justify-center items-center">
@@ -63,10 +86,17 @@ export default function UserSignupPage() {
           <p className="font-figtree font-normal text-[16px]/[140%] tracking-normal text-[#525252] text-center">
             Provide a new password to reset it
           </p>
+          {!token && (
+            <p className="text-red-600 text-sm text-center">
+              Reset token is missing or invalid. Please use the link from your
+              email.
+            </p>
+          )}
         </div>
+
         <div className="w-full flex flex-col gap-[20px] xs:gap-[28px] sm:gap-[36px]">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
+            <form onSubmit={form.handleSubmit(onSubmit)} noValidate>
               <CardContent className="space-y-4 xs:space-y-5 sm:space-y-6 p-0 xs:p-1 sm:p-2">
                 <FormField
                   control={form.control}
@@ -77,8 +107,9 @@ export default function UserSignupPage() {
                         <FormControl>
                           <Input
                             type="password"
-                            placeholder="Password"
-                            className="pl-1 py-6 focus:border-x-transparent focus:border-t-transparent border-0 border-b rounded-none focus:outline-none focus:ring-0 focus:border-b-2 hover:border-0 hover:border-b  placeholder:text-[#7C7C7C]"
+                            placeholder="New Password"
+                            autoComplete="new-password"
+                            className="pl-1 py-6 focus:border-x-transparent focus:border-t-transparent border-0 border-b rounded-none focus:outline-none focus:ring-0 focus:border-b-2 hover:border-0 hover:border-b placeholder:text-[#7C7C7C]"
                             {...field}
                           />
                         </FormControl>
@@ -95,7 +126,8 @@ export default function UserSignupPage() {
                       <FormControl>
                         <Input
                           type="password"
-                          placeholder="Confirm Password"
+                          placeholder="Confirm New Password"
+                          autoComplete="new-password"
                           className="pl-1 py-6 focus:border-x-transparent focus:border-t-transparent border-0 border-b rounded-none focus:outline-none focus:ring-0 focus:border-b-2 hover:border-0 hover:border-b placeholder:text-[#7C7C7C]"
                           {...field}
                         />
@@ -105,15 +137,30 @@ export default function UserSignupPage() {
                   )}
                 />
               </CardContent>
-              <CardFooter className=" mt-4 xs:mt-5 sm:mt-6 p-0 xs:p-1 sm:p-2">
-                <Button
-                  type="submit"
-                  className="w-full h-[40px] xs:h-[45px] sm:h-[50px] md:h-[54px] py-3 xs:py-4 px-4 xs:px-5 rounded-lg xs:rounded-xl bg-[#7F5BAE] hover:bg-[#6a4c93] font-figtree font-bold text-sm xs:text-base leading-[120%] -tracking-[2%] text-white"
-                >
-                  <span className="flex items-center gap-1 xs:gap-2">
-                    Submit
-                  </span>
-                </Button>
+
+              <CardFooter className="mt-4 xs:mt-5 sm:mt-6 p-0 xs:p-1 sm:p-2">
+                <div className="w-full flex flex-col gap-3">
+                  <Button
+                    type="submit"
+                    disabled={isLoading || !token}
+                    className="w-full h-[40px] xs:h-[45px] sm:h-[50px] md:h-[54px] py-3 xs:py-4 px-4 xs:px-5 rounded-lg xs:rounded-xl bg-[#7F5BAE] hover:bg-[#6a4c93] font-figtree font-bold text-sm xs:text-base leading-[120%] -tracking-[2%] text-white"
+                  >
+                    <span className="flex items-center gap-1 xs:gap-2">
+                      {isLoading ? "Resetting..." : "Submit"}
+                    </span>
+                  </Button>
+
+                  {apiError && (
+                    <p className="text-red-500 text-sm font-figtree">
+                      {apiError}
+                    </p>
+                  )}
+                  {data && (data as any)?.success && (
+                    <p className="text-green-600 text-sm font-figtree">
+                      {(data as any).message || "Password reset successful."}
+                    </p>
+                  )}
+                </div>
               </CardFooter>
             </form>
           </Form>

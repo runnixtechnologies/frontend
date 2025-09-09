@@ -1,4 +1,3 @@
-import { DashboardLayout } from "../../_components/dashboard-layout"
 import WelcomeOnboard from "../../_components/welcome"
 import MerchantsCard from "./_components/merchants/card"
 import { TopMerchantsTable } from "./_components/merchants/top-merchants"
@@ -15,7 +14,7 @@ import UsersCard from "./_components/users/card"
 function DashboardPage() {
   const isVerified = false
   return (
-    <DashboardLayout>
+    <>
       {!isVerified ? (
         <WelcomeOnboard />
       ) : (
@@ -47,7 +46,7 @@ function DashboardPage() {
           </div>
         </div>
       )}
-    </DashboardLayout>
+    </>
   )
 }
 

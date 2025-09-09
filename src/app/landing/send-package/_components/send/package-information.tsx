@@ -64,7 +64,7 @@ export default function PackageInformation({
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl md:text-3xl font-bold text-[#36264F] mb-6">
+      <h1 className="text-2xl md:text-3xl font-bold text-[#36264F] dark:text-white mb-6">
         Send a Package Anywhere
       </h1>
       <Form {...form}>
@@ -106,7 +106,7 @@ export default function PackageInformation({
             name="destination"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm/[140%] font-normal text-[#525252]">
+                <FormLabel className="text-sm/[140%] font-normal text-[#525252] dark:text-white">
                   Destination Address:
                 </FormLabel>
                 <div className="relative">
@@ -133,7 +133,7 @@ export default function PackageInformation({
 
           {/* Package Name */}
           <div>
-            <h3 className="font-bold text-[18px]/[120%] text-[#232323] mb-2 tracking-normal">
+            <h3 className="font-bold text-[18px]/[120%] text-[#232323] dark:text-white mb-2 tracking-normal">
               What are you Transporting?
             </h3>
             <FormField

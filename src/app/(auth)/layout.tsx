@@ -1,6 +1,5 @@
-import AppLogo from "@/components/svgs/logo"
+import { ThemeProvider } from "@/components/theme-provider"
 import { Metadata } from "next"
-import Link from "next/link"
 
 export const metadata: Metadata = {
   title: "Authentication | Runnix",
@@ -13,12 +12,13 @@ export default function AuthLayout({
   children: React.ReactNode
 }>) {
   return (
-    <div className="min-h-screen flex flex-col gap-6 justify-center items-center">
-      <Link href="/landing">
-        <AppLogo />
-      </Link>
-
-      {children}
+    <div
+      className="bg-white dark:bg-white min-h-screen flex flex-col gap-6 justify-center items-center"
+      style={{ background: "white !important" }}
+    >
+      <ThemeProvider attribute="class" forcedTheme="light" enableSystem={false}>
+        {children}
+      </ThemeProvider>
     </div>
   )
 }

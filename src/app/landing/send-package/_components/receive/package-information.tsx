@@ -62,7 +62,7 @@ export default function PackageInformation({
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl md:text-3xl font-bold text-[#36264F] mb-6">
+      <h1 className="text-2xl md:text-3xl font-bold text-[#36264F] dark:text-white mb-6">
         Receive a Package Anywhere
       </h1>
 
@@ -132,7 +132,7 @@ export default function PackageInformation({
 
           {/* Package Name */}
           <div>
-            <h3 className="font-bold text-[18px]/[120%] text-[#232323] mb-2 tracking-normal">
+            <h3 className="font-bold text-[18px]/[120%] text-[#232323] dark:text-white mb-2 tracking-normal">
               What are you Transporting?
             </h3>
             <FormField

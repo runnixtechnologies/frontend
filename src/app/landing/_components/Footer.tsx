@@ -51,7 +51,7 @@ export default function Footer() {
         <div className="w-[285px] flex items-center gap-6">
           <ThemeToggle />
           <Link
-            href="/signin"
+            href="/login"
             className="w-fit h-[22px]  flex justify-center items-center  font-figtree font-bold text-[16px]/[140%] tracking-normal text-white"
           >
             Sign In

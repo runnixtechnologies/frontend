@@ -1,3 +1,4 @@
+import { ThemeProvider } from "@/components/theme-provider"
 import { Metadata } from "next"
 import WebsiteRootLayout from "."
 
@@ -11,5 +12,14 @@ export default function LandingRootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  return <WebsiteRootLayout>{children}</WebsiteRootLayout>
+  return (
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+    >
+      <WebsiteRootLayout>{children}</WebsiteRootLayout>
+    </ThemeProvider>
+  )
 }

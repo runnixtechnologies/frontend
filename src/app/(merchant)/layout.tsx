@@ -1,9 +1,10 @@
 import type { Metadata } from "next"
 import type React from "react"
+import { DashboardLayout } from "./_components/dashboard-layout"
 
 export const metadata: Metadata = {
-  title: "Administration",
-  description: "Runnix admin dashboard",
+  title: "Merchant",
+  description: "Runnix merchant dashboard",
 }
 
 export default function RootLayout({
@@ -11,5 +12,5 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  return <div>{children}</div>
+  return <DashboardLayout>{children}</DashboardLayout>
 }

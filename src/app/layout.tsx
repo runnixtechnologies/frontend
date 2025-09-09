@@ -1,6 +1,5 @@
-import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
-import { ReduxProvider } from "@/lib/redux/provider"
+import ReduxProvider from "@/lib/redux/provider"
 import type { Metadata } from "next"
 import { Figtree, Metrophobic } from "next/font/google"
 import React from "react"
@@ -37,15 +36,8 @@ export default function RootLayout({
       >
         <React.Suspense fallback={<div>Loading...</div>}>
           <ReduxProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <AOSProvider>{children}</AOSProvider>
-              <Toaster />
-            </ThemeProvider>
+            <AOSProvider>{children}</AOSProvider>
+            <Toaster />
           </ReduxProvider>
         </React.Suspense>
       </body>

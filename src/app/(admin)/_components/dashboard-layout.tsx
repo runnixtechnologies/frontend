@@ -16,13 +16,13 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 // import { Input } from "@/components/ui/input"
+import AppLogo from "@/components/svgs/logo"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
 import { ChevronDown, LayoutDashboard, Menu, Search } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
-import AppLogo from "@/components/svgs/logo"
 
 interface NavSubItem {
   title: string
@@ -40,49 +40,49 @@ interface NavItem {
 const navItems: NavItem[] = [
   {
     title: "Dashboard",
-    href: "/dashboard",
+    href: "/admin/dashboard",
     icon: DashboardIcon,
   },
   {
     title: "Deliveries",
-    href: "/deliveries",
+    href: "/admin/deliveries",
     icon: DeliveryIcon,
   },
   {
     title: "Merchants",
-    href: "/merchants",
+    href: "/admin/merchants",
     icon: ShopIcon,
     badge: "#F83B3B",
   },
   {
     title: "Riders",
-    href: "/riders",
+    href: "/admin/riders",
     icon: RidersIcon,
     badge: "#F83B3B",
   },
   {
     title: "Users",
-    href: "/users",
+    href: "/admin/users",
     icon: UsersIcon,
   },
   {
     title: "Items",
-    href: "/items",
+    href: "/admin/items",
     icon: BagIcon,
   },
   {
     title: "Pricing",
-    href: "/pricing",
+    href: "/admin/pricing",
     icon: MoneyReceivedIcon,
   },
   {
     title: "Administration",
-    href: "/administration",
+    href: "/admin/administration",
     icon: SecurityUserIcon,
   },
   {
     title: "Issues",
-    href: "/issues",
+    href: "/admin/issues",
     icon: MessagesIconAlt,
   },
 ]
@@ -200,7 +200,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                         <item.icon />
                         <span>{item.title}</span>
                         {item.badge && (
-                          <span className="ml-auto mr-2 h-2 w-2 rounded-full bg-#F83B3B-500" />
+                          <span className="ml-auto mr-2 h-2 w-2 rounded-full bg-[#F83B3B]" />
                         )}
                       </div>
                       <ChevronDown
@@ -237,7 +237,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                   <Link
                     href={item.href}
                     className={cn(
-                      "h-[44px] flex items-center gap-3 rounded-[50px] p-3 text-sm/[20px] font-medium hover:bg-accent cursor-pointer",
+                      "h-[44px] flex items-center gap-3 rounded-[50px] p-3 text-sm/[20px] font-medium hover:bg-[#f5f5f4] cursor-pointer",
                       isActive
                         ? "bg-primary text-white hover:bg-primary/90"
                         : "text-[#7C7C7C]"
@@ -246,7 +246,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                     <item.icon />
                     <span>{item.title}</span>
                     {item.badge && (
-                      <span className="ml-auto h-2 w-2 rounded-full bg-#F83B3B-500" />
+                      <span className="ml-auto h-2 w-2 rounded-full bg-[#F83B3B]" />
                     )}
                   </Link>
                 )}

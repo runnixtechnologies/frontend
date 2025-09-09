@@ -8,7 +8,6 @@ import {
 import { DeliveryStats } from "./_components/stats"
 import { DeliveryTable } from "./_components/table"
 import { DeliveryTabs } from "./_components/tabs"
-import { DashboardLayout } from "../../_components/dashboard-layout"
 
 export interface Delivery {
   id: number
@@ -815,22 +814,20 @@ export default function Orders() {
   }
 
   return (
-    <DashboardLayout>
-      <div className="flex flex-col gap-6 p-4 md:p-6">
-        <DeliveryStats />
-        <div className="w-full bg-white  rounded-lg border flex flex-col gap-3 ">
-          <div className="w-full flex justify-between gap-2 pt-6 pb-5 px-6">
-            <DeliveryTabs
-              activeTab={activeTab}
-              setActiveTab={handleTabChange}
-              size={filtered?.length}
-              tabCounts={tabCounts}
-            />
-            <DeliveryFilters onFilterChange={handleFilterChange} />
-          </div>
-          <DeliveryTable filters={filters} deliveries={deliveries} />
+    <div className="flex flex-col gap-6 p-4 md:p-6">
+      <DeliveryStats />
+      <div className="w-full bg-white  rounded-lg border flex flex-col gap-3 ">
+        <div className="w-full flex justify-between gap-2 pt-6 pb-5 px-6">
+          <DeliveryTabs
+            activeTab={activeTab}
+            setActiveTab={handleTabChange}
+            size={filtered?.length}
+            tabCounts={tabCounts}
+          />
+          <DeliveryFilters onFilterChange={handleFilterChange} />
         </div>
+        <DeliveryTable filters={filters} deliveries={deliveries} />
       </div>
-    </DashboardLayout>
+    </div>
   )
 }
