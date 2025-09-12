@@ -5,7 +5,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {
@@ -24,7 +23,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Ban, Eye, MoreVertical, Trash, UserPlus } from "lucide-react"
+import { Eye, MoreVertical } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import type { Admin } from "../page"
@@ -61,8 +60,6 @@ export function AdminTable({ filters, data = [] }: AdminTableProps) {
             d.email.toLowerCase().includes(q)
         )
       }
-
-      // dateRange logic here...
     }
 
     setFiltered(result)
@@ -86,22 +83,6 @@ export function AdminTable({ filters, data = [] }: AdminTableProps) {
 
   // -- page number array
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1)
-
-  // -- action handlers
-  const handleViewDetails = (admin: Admin) => {
-    console.log("View details for:", admin.name)
-    // Implement view details logic
-  }
-
-  const handleSuspendUser = (admin: Admin) => {
-    console.log("Suspend admin:", admin.name)
-    // Implement edit logic
-  }
-
-  const handleDelete = (admin: Admin) => {
-    console.log("Delete admin:", admin.name)
-    // Implement delete logic with confirmation
-  }
 
   return (
     <>
@@ -148,43 +129,14 @@ export function AdminTable({ filters, data = [] }: AdminTableProps) {
                           <span className="sr-only">Open menu</span>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-[180px]">
-                          <DropdownMenuItem
-                            onClick={() => handleViewDetails(admin)}
-                            className="cursor-pointer"
-                          >
+                          <DropdownMenuItem className="cursor-pointer">
                             <Link
-                              href={`/administration/${admin.id}`}
+                              href={`/admin/administration/${admin.id}`}
                               className="flex items-center"
                             >
                               <Eye className="mr-2 h-4 w-4" />
                               <span>View Details</span>
                             </Link>
-                          </DropdownMenuItem>
-                          {admin.status === "Active" ? (
-                            <DropdownMenuItem
-                              onClick={() => handleSuspendUser(admin)}
-                              className="cursor-pointer"
-                            >
-                              <Ban className="mr-2 h-4 w-4" />
-                              <span>Suspend User</span>
-                            </DropdownMenuItem>
-                          ) : (
-                            <DropdownMenuItem
-                              onClick={() => handleSuspendUser(admin)}
-                              className="cursor-pointer"
-                            >
-                              <UserPlus className="mr-2 h-4 w-4" />
-                              <span>Recall User</span>
-                            </DropdownMenuItem>
-                          )}
-
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            onClick={() => handleDelete(admin)}
-                            className="cursor-pointer text-destructive focus:text-destructive"
-                          >
-                            <Trash className="mr-2 h-4 w-4" />
-                            <span>Delete</span>
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>

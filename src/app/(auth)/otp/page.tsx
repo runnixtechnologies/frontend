@@ -29,7 +29,6 @@ type FormValues = z.infer<typeof formSchema>
 export default function OTPPage() {
   const search = useSearchParams()
   const router = useRouter()
-
   const email = search.get("e") ?? ""
   const token = search.get("t") ?? ""
 
@@ -61,6 +60,7 @@ export default function OTPPage() {
   // resend cooldown (30s)
   const COOLDOWN = 30
   const [cooldown, setCooldown] = useState<number>(0)
+
   useEffect(() => {
     if (cooldown <= 0) return
     const t = setInterval(() => setCooldown((c) => c - 1), 1000)
@@ -78,21 +78,11 @@ export default function OTPPage() {
   const submitVerify = useCallback(
     async (otp: string) => {
       try {
-        // If your backend expects token (your current query string has ?t=)
-        await verifyOtp({ code: otp, token }).unwrap()
-
-        // If instead it expects email, use:
-        // await verifyOtp({ code: otp, channel: "email", email }).unwrap()
-
-        router.push("/auth/verified") // adjust destination
-      } catch (err) {
-        form.setError("otp", {
-          type: "server",
-          message: getApiErrorMessage(err),
-        })
-      }
+        const res = await verifyOtp({ code: otp, token }).unwrap()
+        router.push(`/reset-password/${res?.data?.token}`)
+      } catch {}
     },
-    [verifyOtp, token, router, form]
+    [verifyOtp, token, router]
   )
 
   async function onSubmit(values: FormValues) {
@@ -101,7 +91,6 @@ export default function OTPPage() {
 
   async function handleResendOTP() {
     try {
-      // If your backend resends via token:
       await resendOtp({ token }).unwrap()
       setCooldown(COOLDOWN)
     } catch (err) {
@@ -112,7 +101,7 @@ export default function OTPPage() {
   const verifyErrText = verifyIsError ? getApiErrorMessage(verifyError) : null
   const resendErrText = resendIsError ? getApiErrorMessage(resendError) : null
   const missingIdentity = !email && !token
-
+  console.log("missingIdentity", missingIdentity)
   return (
     <div className="w-full flex flex-col min-h-[80vh]">
       <div className="w-full flex justify-center items-center">

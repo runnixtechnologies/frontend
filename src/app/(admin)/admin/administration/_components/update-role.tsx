@@ -72,7 +72,7 @@ type GetRolesResponse = {
   errors: unknown[]
 }
 
-export function UpdateRoles() {
+export function UpdateRoles({ adminId }: { adminId: number }) {
   const [updateAdminRole, { isLoading, isError, error, data }] =
     useUpdateAdminRoleMutation()
 
@@ -127,17 +127,15 @@ export function UpdateRoles() {
   }
 
   async function onSubmit(values: FormValues) {
-    // ✅ Convert string from form to number
-    const roleId = Number(values.role)
-
     const permissionIds = Object.entries(permissionChecks)
       .filter(([, checked]) => checked)
       .map(([pid]) => Number(pid))
 
     try {
       await updateAdminRole({
-        roleId,
-        permissionIds,
+        admin_id: adminId,
+        role_id: Number(values.role),
+        permission_ids: permissionIds,
       }).unwrap()
     } catch (e) {
       console.error("Update role failed:", e)

@@ -53,8 +53,8 @@ export function UpdateAdminRole({ adminId }: { adminId: string }) {
     try {
       await updateAdminStatus({
         status: values.status,
-        remark: values.remark,
-        adminId,
+        remarks: values.remark,
+        admin_id: Number(adminId),
       }).unwrap()
       form.reset()
     } catch (e) {
@@ -119,14 +119,14 @@ export function UpdateAdminRole({ adminId }: { adminId: string }) {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="font-figtree font-normal text-[10px]/[140%] text-[#525252] tracking-normal">
-                        Last Name
+                        Hello
                       </FormLabel>
                       <FormControl>
                         <Input
                           type="text"
                           placeholder="Enter Last Name"
                           autoComplete="family-name"
-                          className="pl-0 py-6 focus:border-x-transparent focus:border-t-transparent border-0 border-b rounded-none focus:outline-none focus:ring-0 focus:border-b-2 hover:border-0 dark:text-[#232323] hover:border-b placeholder:text-[#7C7C7C]"
+                          className="pl-1 py-6 focus:border-x-transparent focus:border-t-transparent border-0 border-b rounded-none focus:outline-none focus:ring-0 focus:border-b-2 hover:border-0 hover:border-b placeholder:text-[#7C7C7C]"
                           {...field}
                         />
                       </FormControl>

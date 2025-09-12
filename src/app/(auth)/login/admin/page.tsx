@@ -53,10 +53,8 @@ export default function LoginPage() {
         body: JSON.stringify({ token, role: role?.code }),
       })
 
-      // (optional) localStorage for quick UI hydration
       localStorage.setItem("auth:token", token)
       localStorage.setItem("auth:user", JSON.stringify(res.data))
-
       router.push("/admin/dashboard")
     } catch (e) {
       console.log("Login failed:", e)

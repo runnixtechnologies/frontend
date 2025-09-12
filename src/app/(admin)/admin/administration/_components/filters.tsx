@@ -30,18 +30,12 @@ export function AdminFilters({ onFilterChange }: AdminFiltersProps) {
     searchQuery: "",
   })
 
-  // Category options for the filter dialog
-  const categoryOptions = [
-    { id: "motorcycle", label: "Motorcycle" },
-    { id: "car", label: "Car" },
-  ]
-
-  // Handle type change
+  // value
   const handleTypeChange = (value: string) => {
-    const category = value === "all-type" ? "" : value
-    const newFilters = { ...filters, category }
-    setFilters(newFilters)
-    if (onFilterChange) onFilterChange(newFilters)
+    const category = value === "all-type" ? "" : value // category = roleCode
+    const next = { ...filters, type: value, category }
+    setFilters(next)
+    onFilterChange?.(next)
   }
 
   return (
@@ -49,7 +43,7 @@ export function AdminFilters({ onFilterChange }: AdminFiltersProps) {
       <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:items-center">
         <Select value={filters.type} onValueChange={handleTypeChange}>
           <SelectTrigger className="w-full h-[28px] py-1 px-2 font-medium font-figtree text-xs text-[#666666] tracking-normal border rounded border-[#E6E6E6] bg-transparent sm:w-fit">
-            <SelectValue placeholder="All Type" />
+            <SelectValue placeholder="All Members" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem
@@ -58,15 +52,24 @@ export function AdminFilters({ onFilterChange }: AdminFiltersProps) {
             >
               All Members
             </SelectItem>
-            {categoryOptions?.map((category, index) => (
-              <SelectItem
-                key={index}
-                value={category.id}
-                className="font-figtree font-medium tracking-normal text-[#666666] text-xs/[20px] cursor-pointer"
-              >
-                {category.label}
-              </SelectItem>
-            ))}
+            <SelectItem
+              value="super-admin"
+              className="font-figtree font-medium tracking-normal text-[#666666] text-xs/[20px] cursor-pointer"
+            >
+              Super Admin
+            </SelectItem>
+            <SelectItem
+              value="admin"
+              className="font-figtree font-medium tracking-normal text-[#666666] text-xs/[20px] cursor-pointer"
+            >
+              Admin
+            </SelectItem>
+            <SelectItem
+              value="customer-support"
+              className="font-figtree font-medium tracking-normal text-[#666666] text-xs/[20px] cursor-pointer"
+            >
+              Customer Support
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>

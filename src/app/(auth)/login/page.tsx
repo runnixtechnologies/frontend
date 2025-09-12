@@ -55,15 +55,11 @@ export default function LoginPage() {
 
     // (optional) stash user for UI
     localStorage.setItem("auth:user", JSON.stringify(res.data))
+    localStorage.setItem("auth:token", token)
 
     router.push("/dashboard")
   }
 
-  // Attempt to surface a readable error message
-  // const apiError =
-  //   (error as any)?.data?.message ||
-  //   (error as any)?.error ||
-  //   (isError ? "Login failed. Check your credentials and try again." : "")
   const apiError =
     getApiErrorMessage(error) ?? (isError ? "Login failed." : null)
 

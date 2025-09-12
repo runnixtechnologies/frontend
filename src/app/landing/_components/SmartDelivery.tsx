@@ -40,7 +40,6 @@ export default function SmartDeliverySection() {
                   alt="Runnix delivery service"
                   width={552}
                   height={496}
-                  quality={80}
                   className="w-full md:w-[390px] h-[440px] xl:w-[552px] xl:h-[496px] object-cover rounded-[24px] bg-[#D9D9D9]"
                 />
               </SwiperSlide>

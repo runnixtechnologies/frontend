@@ -80,7 +80,6 @@ export async function POST(req: NextRequest) {
     await entry.publish()
 
     return NextResponse.json({ created: true }, { status: 201 })
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("Error creating comment:", error)
     // expose error.message for debugging

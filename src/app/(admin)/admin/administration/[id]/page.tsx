@@ -1,108 +1,176 @@
+// app/admin/members/[adminId]/page.tsx
 "use client"
 
+import { Guard } from "@/components/auth/Guard"
 import { ArrowBack, Location } from "@/components/svgs"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { ChevronDownIcon } from "lucide-react"
+import { useGetSingleAdminQuery } from "@/lib/redux/api/admin"
+import { useGetRolesQuery } from "@/lib/redux/api/utils"
 import Link from "next/link"
-import { useState } from "react"
-import { DashboardLayout } from "../../../_components/dashboard-layout"
-import { AdminDetailTable } from "./_components/orders"
+import { use, useMemo, useState } from "react"
+import { AdminActivityLogs } from "./_components/logs"
+import Permissions from "./_components/permissions"
+import { StatusDialog } from "./_components/status"
 import AdminDetailTabs, { type TabKey } from "./_components/tabs"
-import Transactions from "./_components/transactions"
 
-export default function AdminsPage() {
+export default function AdminsDetailsPage({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
   const [activeTab, setActiveTab] = useState<TabKey>("log")
-  const [status, setStatus] = useState("active")
+  const { id } = use(params)
+  const admin_id = Number(id)
 
-  const handleStatusChange = (value: string) => {
-    setStatus(value)
+  // Single admin fetch
+  const {
+    data,
+    isLoading,
+    isError,
+    error,
+    refetch: refetchAdmin,
+  } = useGetSingleAdminQuery(admin_id, { skip: !admin_id })
+
+  // Fetch master permissions only when the permission tab is opened (perf)
+  const { data: rolesResp } = useGetRolesQuery(undefined, {
+    skip: activeTab !== "permission",
+  })
+  const allPermissions = (rolesResp as any)?.data?.permissions ?? []
+
+  // Normalize initial permission IDs (handles both shapes id / permission_id)
+  const initialPermissionIds: number[] = useMemo(() => {
+    const list = data?.data?.permissions ?? []
+    return list.map((p: any) =>
+      typeof p?.permission_id === "number" ? p.permission_id : p?.id
+    )
+  }, [data?.data?.permissions])
+
+  const admin = data?.data
+  const fullName =
+    [admin?.firstname, admin?.lastname].filter(Boolean).join(" ") ||
+    admin?.username ||
+    "—"
+  const roleName = admin?.role?.name ?? admin?.role?.code ?? "—"
+  const logs = admin?.activity_logs ?? []
+
+  // Loading / Error (behind Guard)
+  if (isLoading) {
+    return (
+      <Guard allow={["super-admin", "admin", "customer-support"]}>
+        <div className="w-full p-6">
+          <div className="rounded-lg border bg-white p-6">
+            <div className="animate-pulse space-y-4">
+              <div className="h-6 w-40 bg-gray-200 rounded" />
+              <div className="h-10 w-full bg-gray-100 rounded" />
+              <div className="h-64 w-full bg-gray-100 rounded" />
+            </div>
+          </div>
+        </div>
+      </Guard>
+    )
+  }
+  if (!admin_id || isError) {
+    return (
+      <Guard allow={["super-admin", "admin", "customer-support"]}>
+        <div className="w-full p-6">
+          <div className="rounded-lg border bg-white p-6">
+            <p className="text-red-600">
+              Failed to load admin details
+              {(error as any)?.data?.message
+                ? `: ${(error as any).data.message}`
+                : "."}
+            </p>
+            <Link
+              href="/admin/members"
+              className="text-primary underline mt-3 inline-block"
+            >
+              Back to members
+            </Link>
+          </div>
+        </div>
+      </Guard>
+    )
   }
 
   return (
-    <DashboardLayout>
+    <Guard allow={["super-admin", "admin", "customer-support"]}>
       <div className="w-full flex flex-col gap-6 p-4 md:p-6">
         <div className="w-full bg-white rounded-[12px] border flex flex-col gap-6 pt-9 px-9 pb-16">
           <div className="w-full flex justify-between py-1 rounded">
             <Link
-              href="/Admins"
+              href="/admin/administration"
               className="font-figtree font-medium text-sm/[20px] hover:underline tracking-normal text-[#666666] flex items-center gap-1"
             >
               <ArrowBack /> Go back
             </Link>
-            <Select value={status} onValueChange={handleStatusChange}>
-              <SelectTrigger
-                className="w-fit h-[28px] py-1 px-2 font-medium font-figtree text-[14px]/[120%] bg-[#F0EEF9] text-primary tracking-normal rounded border-0"
-                icon={<ChevronDownIcon className="size-3 text-primary" />}
-              >
-                <SelectValue placeholder="active" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem
-                  value="active"
-                  className="font-figtree font-medium text-[14px]/[120%] text-[#232323] tracking-normal"
-                >
-                  Active
-                </SelectItem>
-                <SelectItem
-                  value="suspend"
-                  className="font-figtree font-medium text-[14px]/[120%] text-[#232323] tracking-normal"
-                >
-                  suspend
-                </SelectItem>
-                <SelectItem
-                  value="suspend"
-                  className="font-figtree font-medium text-[14px]/[120%] text-[#F83B3B] tracking-normal"
-                >
-                  Delete
-                </SelectItem>
-              </SelectContent>
-            </Select>
+
+            <div className="flex items-center gap-3">
+              <StatusDialog
+                adminId={admin!.id}
+                currentStatus={(admin?.status ?? "active").toLowerCase()}
+                onUpdated={refetchAdmin}
+              />
+            </div>
           </div>
+
           <div className="w-full flex gap-4 items-center">
             <Avatar className="w-[100px] h-[100px]">
               <AvatarImage
-                src="/images/riders/rider-4.jpg"
-                alt="Store picture"
+                src={admin?.photo || "/images/riders/rider-4.jpg"}
+                alt="Admin picture"
               />
-              <AvatarFallback>CR</AvatarFallback>
+              <AvatarFallback>
+                {fullName?.slice(0, 2).toUpperCase() || "AD"}
+              </AvatarFallback>
             </Avatar>
+
             <div className="flex flex-col gap-1">
               <div className="flex items-center justify-between gap-2">
                 <h4 className="text-[#232323] font-figtree font-bold text-[24px]/[32px] -tracking-[2%]">
-                  James Saturn
+                  {fullName}
                 </h4>
               </div>
 
               <h4 className="font-figtree font-medium text-base/[120%] text-left tracking-normal text-[#525252]">
-                Joined: <span className="font-bold">Sat 4th Oct, 2024</span>
+                Role: <span className="font-bold">{roleName}</span>
               </h4>
+
+              {admin?.joined_at && (
+                <h4 className="font-figtree font-medium text-base/[120%] text-left tracking-normal text-[#525252]">
+                  Joined: <span className="font-bold">{admin.joined_at}</span>
+                </h4>
+              )}
+
               <div className="w-fit flex gap-1 py-1 px-2 rounded-[54px] bg-[#F7F6FC]">
-                <Location className="text-primary w-4 h-4" />{" "}
+                <Location className="text-primary w-4 h-4" />
                 <span className="font-figtree font-normal text-[14px]/[140%] tracking-normal text-[#232323]">
-                  Mubi, Ilorin
+                  {admin?.email}
                 </span>
               </div>
             </div>
           </div>
+
           <div className="w-full flex flex-col gap-[48px]">
             <AdminDetailTabs
               activeTab={activeTab}
               setActiveTab={setActiveTab}
             />
+
             <div className="w-full">
-              {activeTab === "log" && <AdminDetailTable />}
-              {activeTab === "permission" && <Transactions />}
+              {activeTab === "log" && <AdminActivityLogs logs={logs} />}
+
+              {activeTab === "permission" && (
+                <Permissions
+                  allPermissions={allPermissions}
+                  roleId={admin!.role.id}
+                  adminId={admin!.id}
+                  initialPermissionIds={initialPermissionIds}
+                />
+              )}
             </div>
           </div>
         </div>
       </div>
-    </DashboardLayout>
+    </Guard>
   )
 }

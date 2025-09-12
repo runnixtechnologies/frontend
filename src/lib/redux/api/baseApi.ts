@@ -7,13 +7,10 @@ export const baseApi = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
     baseUrl: BASE_URL,
-    credentials: "include",
     prepareHeaders: (headers, { getState }) => {
-      // 1) Prefer Redux state (set at login via setCredentials)
       const state = getState() as RootState
       const stateToken = (state?.Auth as any)?.token as string | null
 
-      // 2) Fallback to localStorage (client only)
       let token = stateToken
       if (!token && typeof window !== "undefined") {
         token =

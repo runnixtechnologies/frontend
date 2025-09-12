@@ -42,6 +42,7 @@ export type AuthResponse = {
   token?: string
   user?: unknown
   requiresOtp?: boolean
+  data: any
 }
 
 export type ApiMsg = { success: boolean; message: string }
@@ -51,6 +52,7 @@ export type ForgotPasswordBody = { email: string }
 export type ForgotPasswordResponse = {
   success: boolean
   message: string
+  data: { token: string }
   token?: string
 }
 export type ResetPasswordBody = {

@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import {
   BagIcon,
   DashboardIcon,
@@ -15,14 +14,22 @@ import {
 } from "@/components/svgs"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-// import { Input } from "@/components/ui/input"
 import AppLogo from "@/components/svgs/logo"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
 import { ChevronDown, LayoutDashboard, Menu, Search } from "lucide-react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { useAuth } from "@/lib/hooks/useAuth"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 interface NavSubItem {
   title: string
@@ -38,16 +45,8 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  {
-    title: "Dashboard",
-    href: "/admin/dashboard",
-    icon: DashboardIcon,
-  },
-  {
-    title: "Deliveries",
-    href: "/admin/deliveries",
-    icon: DeliveryIcon,
-  },
+  { title: "Dashboard", href: "/admin/dashboard", icon: DashboardIcon },
+  { title: "Deliveries", href: "/admin/deliveries", icon: DeliveryIcon },
   {
     title: "Merchants",
     href: "/admin/merchants",
@@ -60,87 +59,61 @@ const navItems: NavItem[] = [
     icon: RidersIcon,
     badge: "#F83B3B",
   },
-  {
-    title: "Users",
-    href: "/admin/users",
-    icon: UsersIcon,
-  },
-  {
-    title: "Items",
-    href: "/admin/items",
-    icon: BagIcon,
-  },
-  {
-    title: "Pricing",
-    href: "/admin/pricing",
-    icon: MoneyReceivedIcon,
-  },
+  { title: "Users", href: "/admin/users", icon: UsersIcon },
+  { title: "Items", href: "/admin/items", icon: BagIcon },
+  { title: "Pricing", href: "/admin/pricing", icon: MoneyReceivedIcon },
   {
     title: "Administration",
     href: "/admin/administration",
     icon: SecurityUserIcon,
   },
-  {
-    title: "Issues",
-    href: "/admin/issues",
-    icon: MessagesIconAlt,
-  },
+  { title: "Issues", href: "/admin/issues", icon: MessagesIconAlt },
 ]
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+  const router = useRouter()
+  const { user } = useAuth()
   const [isMobile, setIsMobile] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>(
-    {}
-  )
+  // const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>(
+  //   {}
+  // )
 
-  // Initialize expanded state based on current path
-  useEffect(() => {
-    setExpandedItems({
-      Merchants: pathname?.startsWith("/merchants") || false,
-      Riders: pathname?.startsWith("/riders") || false,
-    })
-  }, [pathname])
+  // Handle logout
+  async function handleLogout() {
+    try {
+      await fetch("/api/auth/session", { method: "DELETE" })
+      localStorage.removeItem("auth:token")
+      localStorage.removeItem("auth:user")
+      router.replace("/login/admin")
+    } catch {
+      router.replace("/login/admin")
+    }
+  }
+
+  // Init expanded state based on current path
+  // useEffect(() => {
+  //   setExpandedItems({
+  //     Merchants: pathname?.startsWith("/merchants") || false,
+  //     Riders: pathname?.startsWith("/riders") || false,
+  //   })
+  // }, [pathname])
 
   useEffect(() => {
     const checkIfMobile = () => {
       setIsMobile(window.innerWidth < 1024)
     }
-
     checkIfMobile()
     window.addEventListener("resize", checkIfMobile)
-
-    return () => {
-      window.removeEventListener("resize", checkIfMobile)
-    }
+    return () => window.removeEventListener("resize", checkIfMobile)
   }, [])
 
-  const toggleExpanded = (title: string) => {
-    setExpandedItems((prev) => ({
-      ...prev,
-      [title]: !prev[title],
-    }))
-  }
-
-  // Get the current page title based on the pathname
   const getPageTitle = () => {
     if (pathname === "/dashboard") return "Dashboard"
     if (pathname === "/deliveries") return "Deliveries"
-    if (pathname?.startsWith("/merchants")) {
-      if (pathname === "/merchants") return "Merchants"
-      if (pathname === "/merchants/pending") return "Pending Merchants"
-      if (pathname === "/merchants/rejected") return "Rejected Merchants"
-      if (pathname === "/merchants/suspended") return "Suspended Merchants"
-      return "Merchants"
-    }
-    if (pathname?.startsWith("/riders")) {
-      if (pathname === "/riders") return "Riders"
-      if (pathname === "/riders/pending") return "Pending Riders"
-      if (pathname === "/riders/rejected") return "Rejected Riders"
-      if (pathname === "/riders/suspended") return "Suspended Riders"
-      return "Riders"
-    }
+    if (pathname?.startsWith("/merchants")) return "Merchants"
+    if (pathname?.startsWith("/riders")) return "Riders"
     if (pathname === "/users") return "Users"
     if (pathname === "/items") return "Items"
     if (pathname === "/pricing") return "Pricing"
@@ -149,7 +122,6 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     return "Dashboard"
   }
 
-  // Get the current page icon based on the pathname
   const getPageIcon = () => {
     if (pathname === "/dashboard")
       return <DashboardIcon className="text-primary" />
@@ -182,74 +154,23 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           {navItems.map((item, index) => {
             const isActive =
               pathname === item.href || pathname?.startsWith(item.href + "/")
-
             return (
               <div key={index} className="flex flex-col">
-                {item.subItems ? (
-                  <div>
-                    <button
-                      onClick={() => toggleExpanded(item.title)}
-                      className={cn(
-                        "w-full h-[44px] flex gap-2 items-center justify-between rounded-[50px] p-3 text-sm/[20px] tracking-normal align-middle font-medium hover:bg-accent ",
-                        isActive
-                          ? "bg-primary text-white hover:bg-primary"
-                          : "text-[#7C7C7C]"
-                      )}
-                    >
-                      <div className="flex items-center gap-3">
-                        <item.icon />
-                        <span>{item.title}</span>
-                        {item.badge && (
-                          <span className="ml-auto mr-2 h-2 w-2 rounded-full bg-[#F83B3B]" />
-                        )}
-                      </div>
-                      <ChevronDown
-                        className={cn(
-                          "h-4 w-4 transition-transform",
-                          expandedItems[item.title] ? "rotate-180" : ""
-                        )}
-                      />
-                    </button>
-
-                    {expandedItems[item.title] && (
-                      <div className="ml-9 mt-1 space-y-1">
-                        {item.subItems.map((subItem, subIndex) => {
-                          const isSubActive = pathname === subItem.href
-                          return (
-                            <Link
-                              key={subIndex}
-                              href={subItem.href}
-                              className={cn(
-                                "block rounded-md p-3 text-sm/[20px] hover:bg-accent",
-                                isSubActive
-                                  ? "bg-purple-50 text-primary"
-                                  : "text-muted-foreground"
-                              )}
-                            >
-                              {subItem.title}
-                            </Link>
-                          )
-                        })}
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <Link
-                    href={item.href}
-                    className={cn(
-                      "h-[44px] flex items-center gap-3 rounded-[50px] p-3 text-sm/[20px] font-medium hover:bg-[#f5f5f4] cursor-pointer",
-                      isActive
-                        ? "bg-primary text-white hover:bg-primary/90"
-                        : "text-[#7C7C7C]"
-                    )}
-                  >
-                    <item.icon />
-                    <span>{item.title}</span>
-                    {item.badge && (
-                      <span className="ml-auto h-2 w-2 rounded-full bg-[#F83B3B]" />
-                    )}
-                  </Link>
-                )}
+                <Link
+                  href={item.href}
+                  className={cn(
+                    "h-[44px] flex items-center gap-3 rounded-[50px] p-3 text-sm/[20px] font-medium hover:bg-[#f5f5f4]",
+                    isActive
+                      ? "bg-primary text-white hover:bg-primary/90"
+                      : "text-[#7C7C7C]"
+                  )}
+                >
+                  <item.icon />
+                  <span>{item.title}</span>
+                  {item.badge && (
+                    <span className="ml-auto h-2 w-2 rounded-full bg-[#F83B3B]" />
+                  )}
+                </Link>
               </div>
             )
           })}
@@ -260,7 +181,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex min-h-screen bg-[#F7F6FC]">
-      {/* Fixed Sidebar - 100% height */}
+      {/* Sidebar */}
       <aside className="fixed left-0 top-0 z-30 hidden h-full w-[222px] border-r bg-white lg:block">
         <SidebarContent />
       </aside>
@@ -284,9 +205,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         </Sheet>
       )}
 
-      {/* Main Content Area */}
+      {/* Main Content */}
       <div className="flex w-full flex-col lg:ml-[222px]">
-        {/* App Bar - Separate from sidebar */}
+        {/* App Bar */}
         <header className="sticky top-0 z-20 flex h-[66px] items-center gap-4 border-b bg-white py-4 pl-6 pr-9">
           <div className="flex items-center gap-2 lg:ml-0">
             {isMobile && (
@@ -309,14 +230,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           </div>
 
           <div className="w-[199px] ml-auto flex items-center gap-4">
-            {/* <div className="relative hidden md:block">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search..."
-                className="w-[200px] pl-9 rounded-full bg-muted/30 focus-visible:bg-background"
-              />
-            </div> */}
+            {/* Search */}
             <Button
               variant="outline"
               size="icon"
@@ -325,29 +239,57 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               <Search className="h-[20.27px] w-[20.27px]" />
               <span className="sr-only">Search</span>
             </Button>
-            <div className="w-[165px] h-[34px] flex items-center justify-between gap-6">
-              <div className="w-[123px] flex items-center gap-1">
-                <Avatar>
-                  <AvatarImage
-                    src="/images/mr_Keneth.png"
-                    alt="Keneth Smith"
-                    className="w-8 h-8"
-                  />
-                  <AvatarFallback className="bg-primary/20 text-[10px]/[20px] font-figtree font-normal text-black/900">
-                    KS
-                  </AvatarFallback>
-                </Avatar>
-                <div className="hidden lg:block">
-                  <p className="text-sm/[20px] font-semibold font-figtree text-black-900">
-                    Keneth Smith
-                  </p>
-                  <p className="text-[10px]/[20px] font-figtree font-normal text-[#666666]">
-                    Admin
-                  </p>
-                </div>
-              </div>
-              <ChevronDown className="w-4 h-4" />
-            </div>
+
+            {/* User Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="w-[165px] h-[34px] flex items-center justify-between gap-2 rounded-full hover:bg-muted/40 px-2">
+                  <div className="w-[123px] flex items-center gap-2">
+                    <Avatar>
+                      <AvatarImage
+                        src="/images/mr_Keneth.png"
+                        alt={`${user?.firstname ?? ""} ${user?.lastname ?? ""}`}
+                        className="w-8 h-8"
+                      />
+                      <AvatarFallback className="bg-primary/20 text-[10px]/[20px] font-figtree font-normal text-black/900">
+                        {`${user?.firstname?.[0] ?? ""}${
+                          user?.lastname?.[0] ?? ""
+                        }`.toUpperCase() || "AD"}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="hidden lg:block text-left">
+                      <p className="text-sm/[20px] font-semibold font-figtree text-black-900 truncate">
+                        {`${user?.firstname ?? ""} ${user?.lastname ?? ""}`}
+                      </p>
+                      <p className="text-[10px]/[20px] font-figtree font-normal text-[#666666] capitalize">
+                        {user?.role?.name ?? ""}
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel className="truncate">
+                  {user?.email ?? "Account"}
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href="/admin/profile">Profile</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/admin/settings">Settings</Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="text-red-600 focus:text-red-600"
+                  onClick={handleLogout}
+                >
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </header>
 

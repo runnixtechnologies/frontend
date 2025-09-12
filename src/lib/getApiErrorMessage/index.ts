@@ -12,7 +12,6 @@ function isFetchBaseQueryError(e: unknown): e is FetchBaseQueryError {
 }
 
 export function getApiErrorMessage(error: unknown): string {
-  console.log("error", error)
   if (!error) return ""
 
   if (isFetchBaseQueryError(error)) {

@@ -30,7 +30,6 @@ export default function BlogCards({ posts }: { posts: ContentfulBlogPost[] }) {
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1)
 
   function BlogCard({ post }: { post: ContentfulBlogPost }) {
-    console.log("post", post)
     return (
       <Link
         href={`/landing/blog/${post.slug}`}

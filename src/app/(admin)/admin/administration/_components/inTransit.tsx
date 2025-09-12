@@ -59,7 +59,6 @@ export default function IntransitPackageInformation({
 }: PackageProps) {
   const search = useSearchParams()
   const id = search.get("id") || "RN422G4342D43"
-  console.log("selectedDelivery", selectedDelivery)
   // Current stage: 3 (Package in Transit)
   const currentStage = 3
 

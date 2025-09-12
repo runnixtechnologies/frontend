@@ -51,7 +51,6 @@ export default function TrackOrder() {
 
   // Handle form submission
   async function onSubmit(data: FormValues) {
-    console.log("data", data)
     if (data) {
       router.push(`/landing/track-order?id=${data?.number}`)
       setOpen(false)

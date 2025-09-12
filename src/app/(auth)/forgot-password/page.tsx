@@ -38,7 +38,7 @@ export default function ForgotPasswordPage() {
       const res = await forgotPassword({ email: values.email }).unwrap()
       router.push(
         `/otp?e=${encodeURIComponent(values.email)}&t=${encodeURIComponent(
-          res.token ?? ""
+          res?.data?.token ?? ""
         )}`
       )
     } catch {}

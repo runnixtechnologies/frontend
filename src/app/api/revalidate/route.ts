@@ -93,12 +93,10 @@ export async function POST(req: NextRequest) {
       const path = CONTENT_TYPE_MAP[contentType](slug)
       revalidatePath(path)
       revalidateTag(`post-${slug}`)
-      console.log(`[Revalidated] ${contentType}:${slug}`)
     }
 
     return NextResponse.json({ revalidated: true })
   } catch (err) {
-    console.error("[Revalidate error]", err)
     return NextResponse.json(
       { message: "Failed to revalidate", error: (err as Error).message },
       { status: 500 }

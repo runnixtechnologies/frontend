@@ -1,14 +1,49 @@
-// lib/hooks/useAuth.ts
 "use client"
 
+import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import type { RootState } from "@/lib/redux/store"
-import type { AuthState } from "@/lib/redux/auth/types"
+
+type Role = { id: number; name: string; code: string }
+type User = {
+  id: number
+  firstname: string
+  lastname: string
+  email: string
+  role?: Role
+  token?: string
+} | null
 
 export function useAuth() {
-  const auth = useSelector((s: RootState) => s.Auth) as AuthState
-  const token = auth?.token ?? auth?.user?.token ?? null
+  // if you keep an Auth slice, read it first
+  const authSlice = useSelector((s: RootState) => (s as any)?.Auth)
+  const sliceToken: string | undefined = authSlice?.token
+  const sliceUser: User = authSlice?.user ?? null
+
+  const [lsToken, setLsToken] = useState<string | undefined>(undefined)
+  const [lsUser, setLsUser] = useState<User>(null)
+  const [ready, setReady] = useState(false)
+
+  // read localStorage once on client
+  useEffect(() => {
+    try {
+      if (typeof window !== "undefined") {
+        const t = localStorage.getItem("auth:token") || undefined
+        const u = localStorage.getItem("auth:user")
+        setLsToken(t)
+        setLsUser(u ? (JSON.parse(u) as User) : null)
+      }
+    } catch {
+      setLsToken(undefined)
+      setLsUser(null)
+    } finally {
+      setReady(true)
+    }
+  }, [])
+
+  // prefer Redux if present, otherwise fall back to LS
+  const token = sliceToken ?? lsToken
+  const user = (sliceUser ?? lsUser) as User
   const isLoggedIn = Boolean(token)
-  const user = auth?.user ?? null
-  return { isLoggedIn, user, token }
+  return { isLoggedIn, user, token, ready }
 }

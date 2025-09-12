@@ -1,4 +1,3 @@
-// components/auth/Guard.tsx
 "use client"
 
 import { ReactNode, useEffect } from "react"
@@ -19,25 +18,30 @@ export function Guard({
   children: ReactNode
   allow?: RoleCode | RoleCode[]
 }) {
-  const { isLoggedIn, user } = useAuth()
+  const { isLoggedIn, user, ready } = useAuth()
   const router = useRouter()
   const pathname = usePathname()
-  const role = user?.role?.code
 
-  const allowList = Array.isArray(allow) ? allow : allow ? [allow] : null
+  const role = user?.role?.code?.toLowerCase()
+  const allowList = Array.isArray(allow)
+    ? allow.map((r) => r.toLowerCase())
+    : allow
+    ? [allow.toLowerCase()]
+    : null
   const isAllowed = !allowList || (role && allowList.includes(role))
 
   useEffect(() => {
+    if (!ready) return // wait until LS/Redux checked
     if (!isLoggedIn) {
-      // Decide which login route
       const isAdminPage = pathname?.startsWith("/admin")
       const loginUrl = isAdminPage ? "/login/admin" : "/login"
       router.replace(`${loginUrl}?next=${encodeURIComponent(pathname || "/")}`)
     } else if (!isAllowed) {
       router.replace("/403")
     }
-  }, [isLoggedIn, isAllowed, router, pathname])
+  }, [ready, isLoggedIn, isAllowed, router, pathname])
 
+  if (!ready) return null
   if (!isLoggedIn || !isAllowed) return null
   return <>{children}</>
 }

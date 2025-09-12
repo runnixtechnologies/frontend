@@ -84,7 +84,7 @@ export default function PackageInformation({
 
   // Handle form submission
   async function onSubmit(data: FormValues) {
-    console.log("Form data:", data)
+    console.log("data", data)
     nextStep()
   }
 
