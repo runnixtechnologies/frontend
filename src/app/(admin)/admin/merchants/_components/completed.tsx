@@ -59,7 +59,7 @@ export default function CompletedPackageInformation({
 }: PackageProps) {
   const search = useSearchParams()
   const id = search.get("id") || "RN422G4342D43"
-  console.log("selectedDelivery", selectedDelivery)
+
   // Current stage: 2 (Arrived for Pickup)
   const currentStage = 5
 

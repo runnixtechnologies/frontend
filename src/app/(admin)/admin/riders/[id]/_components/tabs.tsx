@@ -20,7 +20,7 @@ export default function RiderDetailTabs({
     { id: "vehicles", label: "Vehicle Information" },
     {
       id: "transaction",
-      label: "Transactions",
+      label: "Earnings",
     },
   ]
 

@@ -1,103 +1,180 @@
 "use client"
 
+import UserInformation from "@/app/(admin)/_components/info"
+import { OrdersTable } from "@/app/(admin)/_components/orders"
+import { OrderStats } from "@/app/(admin)/_components/orders/stats"
+import Transactions from "@/app/(admin)/_components/transactions"
+import { UserStatusButton } from "@/app/(admin)/_components/update-status"
 import { ArrowBack, Location } from "@/components/svgs"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { ChevronDownIcon } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { ApiUser, useGetSingleUserQuery } from "@/lib/redux/api/users"
 import Link from "next/link"
-import { useState } from "react"
-import RiderInformation from "./_components/rider"
-import { RiderStats } from "./_components/stats"
+import { useParams } from "next/navigation"
+import { useMemo, useState } from "react"
 import RiderDetailTabs, { type TabKey } from "./_components/tabs"
-import Transactions from "./_components/transactions"
-import { TripsTable } from "./_components/trips"
 import VehicleInformation from "./_components/vehicles"
+
+function getInitials(name: string) {
+  const parts = name.trim().split(/\s+/).slice(0, 2)
+  return parts.map((p) => p[0]?.toUpperCase() ?? "").join("") || "US"
+}
 
 export default function RidersPage() {
   const [activeTab, setActiveTab] = useState<TabKey>("trips")
-  const [status, setStatus] = useState("active")
+  const params = useParams<{ userId?: string; id?: string }>()
+  const idParam = params?.userId ?? params?.id ?? ""
+  const userId = Number(idParam)
+  const userType: "user" | "rider" | "merchant" = "rider"
 
-  const handleStatusChange = (value: string) => {
-    setStatus(value)
+  const {
+    data: singleResp,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useGetSingleUserQuery({ userType, id: userId }, { skip: !userId })
+
+  // Unwrap: our API might return ApiUser directly or {status,message,data}
+  const user: ApiUser | undefined = useMemo(() => {
+    const r: any = singleResp
+    if (!r) return undefined
+    return r?.data ?? r
+  }, [singleResp])
+
+  const fullName = useMemo(() => {
+    const first = user?.profile?.first_name ?? user?.rider?.first_name ?? ""
+    const last = user?.profile?.last_name ?? user?.rider?.last_name ?? ""
+    return (
+      [first, last].filter(Boolean).join(" ") ||
+      user?.email ||
+      user?.phone ||
+      "—"
+    )
+  }, [user])
+
+  const joined = useMemo(
+    () => (user?.created_at ? new Date(user.created_at).toDateString() : "—"),
+    [user]
+  )
+
+  const email = user?.email ?? "—"
+  const avatarUrl =
+    user?.profile?.profile_image ??
+    (user as any)?.profile?.profile_picture ??
+    user?.rider?.profile_image ??
+    null
+
+  if (!userId) {
+    return (
+      <div className="w-full p-6">
+        <div className="rounded-lg border bg-white p-6">
+          <p className="text-sm">Missing user id in the URL.</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (isLoading) {
+    return (
+      <div className="w-full p-6">
+        <div className="rounded-lg border bg-white p-6">
+          <div className="animate-pulse space-y-4">
+            <div className="h-6 w-40 bg-gray-200 rounded" />
+            <div className="h-20 w-full bg-gray-100 rounded" />
+            <div className="h-64 w-full bg-gray-100 rounded" />
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (isError) {
+    return (
+      <div className="w-full p-6">
+        <div className="rounded-lg border bg-white p-6">
+          <p className="text-red-600">
+            Failed to load user
+            {(error as any)?.data?.message
+              ? `: ${(error as any).data.message}`
+              : "."}
+          </p>
+          <div className="mt-3">
+            <Button onClick={() => refetch()}>Retry</Button>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
     <div className="w-full flex flex-col gap-6 p-4 md:p-6">
-      <RiderStats />
+      <OrderStats userId={userId} />
 
       <div className="w-full bg-white rounded-[12px] border flex flex-col gap-6 pt-9 px-9 pb-16">
         <div className="w-full flex justify-between py-1 rounded">
           <Link
-            href="/Riders"
+            href="/admin/riders"
             className="font-figtree font-medium text-sm/[20px] hover:underline tracking-normal text-[#666666] flex items-center gap-1"
           >
             <ArrowBack /> Go back
           </Link>
-          <Select value={status} onValueChange={handleStatusChange}>
-            <SelectTrigger
-              className="w-fit h-[28px] py-1 px-2 font-medium font-figtree text-[14px]/[120%] bg-[#F0EEF9] text-primary tracking-normal rounded border-0"
-              icon={<ChevronDownIcon className="size-3 text-primary" />}
-            >
-              <SelectValue placeholder="active" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem
-                value="active"
-                className="font-figtree font-medium text-[14px]/[120%] text-[#232323] tracking-normal"
-              >
-                Active
-              </SelectItem>
-              <SelectItem
-                value="suspend"
-                className="font-figtree font-medium text-[14px]/[120%] text-[#232323] tracking-normal"
-              >
-                suspend
-              </SelectItem>
-              <SelectItem
-                value="suspend"
-                className="font-figtree font-medium text-[14px]/[120%] text-[#F83B3B] tracking-normal"
-              >
-                Delete
-              </SelectItem>
-            </SelectContent>
-          </Select>
+          <UserStatusButton
+            userId={userId}
+            currentStatus={
+              String(user?.status ?? 1) === "1"
+                ? "active"
+                : String(user?.status ?? 0) === "0"
+                ? "inactive"
+                : "suspended"
+            }
+            onUpdated={refetch}
+          />
         </div>
+
         <div className="w-full flex gap-4 items-center">
           <Avatar className="w-[100px] h-[100px]">
-            <AvatarImage src="/images/riders/rider-4.jpg" alt="Store picture" />
-            <AvatarFallback>CR</AvatarFallback>
+            {/* Only render image if we truly have one */}
+            {avatarUrl ? (
+              <AvatarImage src={avatarUrl} alt={`${fullName} picture`} />
+            ) : null}
+            <AvatarFallback>{getInitials(fullName)}</AvatarFallback>
           </Avatar>
+
           <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between gap-2">
               <h4 className="text-[#232323] font-figtree font-bold text-[24px]/[32px] -tracking-[2%]">
-                James Saturn
+                {fullName}
               </h4>
             </div>
 
             <h4 className="font-figtree font-medium text-base/[120%] text-left tracking-normal text-[#525252]">
-              Joined: <span className="font-bold">Sat 4th Oct, 2024</span>
+              Joined: <span className="font-bold">{joined}</span>
             </h4>
             <div className="w-fit flex gap-1 py-1 px-2 rounded-[54px] bg-[#F7F6FC]">
-              <Location className="text-primary w-4 h-4" />{" "}
+              <Location className="text-primary w-4 h-4" />
               <span className="font-figtree font-normal text-[14px]/[140%] tracking-normal text-[#232323]">
-                Mubi, Ilorin
+                {email}
               </span>
             </div>
           </div>
         </div>
+
         <div className="w-full flex flex-col gap-[48px]">
           <RiderDetailTabs activeTab={activeTab} setActiveTab={setActiveTab} />
           <div className="w-full">
-            {activeTab === "trips" && <TripsTable />}
-            {activeTab === "rider" && <RiderInformation />}
-            {activeTab === "vehicles" && <VehicleInformation />}
-            {activeTab === "transaction" && <Transactions />}
+            {/* For riders, filter orders by riderId */}
+            {activeTab === "trips" && <OrdersTable userId={userId} />}
+
+            {activeTab === "rider" && (
+              <UserInformation userType="rider" userId={userId} />
+            )}
+
+            <VehicleInformation userId={userId} />
+
+            {activeTab === "transaction" && (
+              <Transactions userType="rider" userId={userId} />
+            )}
           </div>
         </div>
       </div>

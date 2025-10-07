@@ -1,14 +1,12 @@
-import MerchantsCard from "./_components/merchants/card"
-import { TopMerchantsTable } from "./_components/merchants/top-merchants"
-import OrdersCard from "./_components/orders/card"
+import NewUserCard from "./_components/new-users"
 import TopOrdersByDeviceCard from "./_components/orders/devices"
 import TopOrdersByLocationCard from "./_components/orders/location"
 import { TopOrderedItemsTable } from "./_components/orders/top-orders"
 import TopOrdersByTypeCard from "./_components/orders/type"
-import RidersCard from "./_components/riders/card"
-import { TopPerformingRidersTable } from "./_components/riders/top"
 import { DashboardStats } from "./_components/stats"
-import UsersCard from "./_components/users/card"
+import TopPerformingUsersTable from "./_components/top-performing-merchants"
+import TopPerformingRidersTable from "./_components/top-performing-riders"
+import { UserMetricsChart } from "./_components/user-chart"
 
 function DashboardPage() {
   return (
@@ -19,10 +17,14 @@ function DashboardPage() {
         <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           <div className="col-span-2 shrink-0 flex flex-col gap-3">
             <div className="w-full grid grid-cols-1 xl:grid-cols-2 gap-3">
-              <UsersCard />
-              <OrdersCard />
+              <UserMetricsChart type="users" />
+              <UserMetricsChart type="orders" />
             </div>
-            <TopMerchantsTable />
+
+            <TopPerformingUsersTable
+              type="merchant"
+              title="Top Performance Merchants"
+            />
             <div className="w-full grid grid-cols-1 xl:grid-cols-2 gap-3">
               <TopOrderedItemsTable />
               <TopPerformingRidersTable />
@@ -30,8 +32,9 @@ function DashboardPage() {
           </div>
 
           <div className="col-span-1 flex flex-col gap-4">
-            <MerchantsCard />
-            <RidersCard />
+            <NewUserCard role="merchant" page="merchants" />
+            <NewUserCard role="rider" page="riders" />
+            <NewUserCard role="user" page="users" />
             <TopOrdersByTypeCard />
             <TopOrdersByDeviceCard />
             <TopOrdersByLocationCard />

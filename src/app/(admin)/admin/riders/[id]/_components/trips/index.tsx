@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import {
   Pagination,
   PaginationContent,
@@ -16,148 +17,52 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { useEffect, useState } from "react"
-import { TripsStats } from "./stats"
 import { TripsFilters } from "./filter"
+import { OrderStats } from "@/app/(admin)/_components/orders/stats"
+import { useGetAllOrdersQuery, type OrderRow } from "@/lib/redux/api/orders"
 
 export type RiderFilterValues = {
   type: string
   location: string
   category: string
-  status: string[]
+  status: string[] // ["Pending","Completed",...]
   dateRange: string
   searchQuery: string
 }
 
-export interface Rider {
-  id: number
-  date: string
-  time: string
-  user: string
-  rider: string
-  destination: string
-  ends: string
-  fee: string
-  duration: string
-  packs: number
-  imgUrl: string
-  category: string
-  status: "in-transit" | "Pending" | "Completed" | "Cancelled"
+type TripsTableProps = {
+  riderId: number | string
+  pageSize?: number
 }
 
-// sample data...
-const trips: Rider[] = [
-  {
-    id: 1,
-    date: "Sat 15, Aug",
-    time: "4:30 PM",
-    user: "Tile Bar",
-    destination: "114 Worm Avenue, Henlow, BD48 1IV",
-    ends: "+2348012345610",
-    fee: "₦ 264,786",
-    rider: "Bilkis Illiyas",
-    imgUrl: "/images/riders/rider-1.jpg",
-    status: "Completed",
-    duration: "2 months ago",
-    packs: 3,
-    category: "fashion",
-  },
-  {
-    id: 2,
-    date: "Sat 15, Aug",
-    time: "4:30 PM",
-    user: "Metro Groceries",
-    destination: "413 Horses Road, Smethwick, NG26 1BN",
-    ends: "+2348012345611",
-    fee: "₦ 264,786",
-    rider: "Teekay Micheal",
-    imgUrl: "/images/riders/rider-2.jpg",
-    status: "Completed",
-    duration: "3 weeks ago",
-    packs: 2,
-    category: "food",
-  },
-  {
-    id: 3,
-    date: "Sat 15, Aug",
-    time: "4:30 PM",
-    user: "Fashion Hub",
-    destination: "477 Elegant Avenue, North Berwick, SN49 7LU",
-    ends: "+2348012345612",
-    fee: "₦ 264,786",
-    rider: "Moses Bonas",
-    imgUrl: "/images/riders/rider-3.jpg",
-    status: "Completed",
-    duration: "1 month ago",
-    packs: 6,
-    category: "fashion",
-  },
-  {
-    id: 4,
-    date: "Sat 15, Aug",
-    time: "4:30 PM",
-    user: "Tech World",
-    destination: "229 Crash Lane, New Romney, DT65 6CT",
-    ends: "+2348012345613",
-    fee: "₦ 264,786",
-    rider: "Musa Isa",
-    imgUrl: "/images/riders/rider-1.jpg",
-    status: "Cancelled",
-    duration: "5 months ago",
-    packs: 1,
-    category: "it",
-  },
-  {
-    id: 5,
-    date: "Sat 15, Aug",
-    time: "4:30 PM",
-    user: "Gourmet Delights",
-    destination: "398 Improve Street, Tatsfield, TW15 7LS",
-    ends: "+2348012345614",
-    fee: "₦ 264,786",
-    rider: "Mary John",
-    imgUrl: "/images/riders/rider-3.jpg",
-    status: "Completed",
-    duration: "2 weeks ago",
-    packs: 2,
-    category: "supermarket",
-  },
-  {
-    id: 6,
-    date: "Sat 15, Aug",
-    time: "4:30 PM",
-    user: "Pending Shop",
-    destination: "108 Guitar Lane, Portsmouth, SM13 8LS",
-    ends: "+2348012345615",
-    fee: "₦ 0",
-    rider: "John Doe",
-    imgUrl: "/images/riders/rider-2.jpg",
-    status: "Pending",
-    duration: "3 days ago",
-    packs: 1,
-    category: "supermarket",
-  },
-  {
-    id: 7,
-    date: "Sat 15, Aug",
-    time: "4:30 PM",
-    user: "Suspended Store",
-    destination: "suspended@example.com",
-    ends: "+2348012345616",
-    fee: "₦ 264,786",
-    rider: "Bilkis Illiyas",
-    imgUrl: "/images/riders/rider-1.jpg",
-    status: "Pending",
-    duration: "4 months ago",
-    packs: 1,
-    category: "food",
-  },
-]
+const statusBadgeClass: Record<OrderRow["status"], string> = {
+  Completed: "bg-[#EEFFF1] text-[#01B833]",
+  "in-transit": "bg-[#F0EEF9] text-primary",
+  Pending: "bg-[#FFF3ED] text-[#FF875C]",
+  Cancelled: "bg-[#FFE1E1] text-[#F83B3B]",
+}
 
-export function TripsTable() {
-  // -- state
-  const [filtered, setFiltered] = useState<Rider[]>(trips)
-  const [filters, setFilters] = useState<RiderFilterValues>({
+function renderStatusBadge(status: OrderRow["status"]) {
+  const cls = statusBadgeClass[status] ?? "bg-gray-100 text-gray-600"
+  return (
+    <span className={`px-2 py-1 rounded-md text-xs font-medium ${cls}`}>
+      {status}
+    </span>
+  )
+}
+
+/** Map UI multi-select to API single status value */
+function uiToApiStatus(ui: string[] | undefined): string | undefined {
+  if (!ui || ui.length === 0) return undefined
+  const s = ui[0].toLowerCase()
+  if (s === "completed") return "completed"
+  if (s === "cancelled") return "cancelled"
+  if (s === "in-transit" || s === "in_transit") return "in_transit"
+  return "pending"
+}
+
+export function TripsTable({ riderId, pageSize = 10 }: TripsTableProps) {
+  const [filters, setFilters] = React.useState<RiderFilterValues>({
     type: "all-type",
     location: "all-locations",
     status: [],
@@ -165,93 +70,64 @@ export function TripsTable() {
     dateRange: "all-time",
     searchQuery: "",
   })
-  const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 10
-  const totalPages = Math.max(1, Math.ceil(trips.length / itemsPerPage))
+  const [page, setPage] = React.useState(1)
 
-  // -- slicing for current page
-  const start = (currentPage - 1) * itemsPerPage
-  const pageItems = filtered.slice(start, start + itemsPerPage)
+  const apiStatus = React.useMemo(
+    () => uiToApiStatus(filters.status),
+    [filters.status]
+  )
 
-  // -- handlers
+  const { data, isLoading, isError, error, refetch } = useGetAllOrdersQuery({
+    page,
+    limit: pageSize,
+    riderid: riderId, // ← filter by this rider
+    status: apiStatus, // optional server-side status filter
+    // You can also map filters.dateRange → date_from/date_to here if needed
+  })
+
+  const allRows = React.useMemo(() => data?.rows ?? [], [data])
+
+  const rows = React.useMemo(() => {
+    const q = filters.searchQuery.trim().toLowerCase()
+    if (!q) return allRows
+    return allRows.filter(
+      (r) =>
+        r.user.toLowerCase().includes(q) ||
+        r.rider.toLowerCase().includes(q) ||
+        r.destination.toLowerCase().includes(q)
+    )
+  }, [allRows, filters.searchQuery])
+  const lastPage = data?.lastPage ?? 1
+  const pages = React.useMemo(
+    () => Array.from({ length: Math.max(1, lastPage) }, (_, i) => i + 1),
+    [lastPage]
+  )
+
   const changePage = (p: number) => {
-    const next = Math.max(1, Math.min(totalPages, p))
-    setCurrentPage(next)
+    const next = Math.max(1, Math.min(lastPage || 1, p))
+    setPage(next)
     document
       .querySelector(".rounded-md.border")
       ?.scrollIntoView({ behavior: "smooth", block: "start" })
   }
-  // -- page number array
-  const pages = Array.from({ length: totalPages }, (_, i) => i + 1)
 
-  // Function to render status badge
-  const renderStatusBadge = (status: string) => {
-    const statusStyles = {
-      Completed: "bg-[#EEFFF1] text-[#01B833]",
-      "in-transit": "bg-[#F0EEF9] text-primary",
-      Pending: "bg-[#FFF3ED] text-[#FF875C]",
-      Cancelled: "bg-[#FFE1E1] text-[#F83B3B]",
-    }
-
-    const style =
-      statusStyles[status as keyof typeof statusStyles] ||
-      "bg-gray-100 text-gray-600"
-
-    return (
-      <span className={`px-2 py-1 rounded-md text-xs font-medium ${style}`}>
-        {status}
-      </span>
-    )
+  const handleFilterChange = (next: Partial<RiderFilterValues>) => {
+    setPage(1) // reset to page 1 on filter changes
+    setFilters((prev) => ({ ...prev, ...next }))
   }
-
-  // Merge new filter values
-  const handleFilterChange = (newFilters: Partial<RiderFilterValues>) => {
-    setFilters((prev) => ({
-      ...prev,
-      ...newFilters,
-    }))
-  }
-  useEffect(() => {
-    let result = [...trips]
-
-    // 2) Location filter
-    if (filters.location !== "all-locations") {
-      const locMap: Record<string, number[]> = {
-        north: [1, 5, 9, 13, 17, 21, 25, 29],
-        south: [2, 6, 10, 14, 18, 22, 26, 30],
-        east: [3, 7, 11, 15, 19, 23, 27],
-        west: [4, 8, 12, 16, 20, 24, 28],
-      }
-      result = result.filter((d) => locMap[filters.location]?.includes(d.id))
-    }
-
-    // 3) Category dropdown
-    if (filters.category) {
-      result = result.filter((d) => d.category === filters.category)
-    }
-
-    // 4) Search
-    if (filters.searchQuery.trim()) {
-      const q = filters.searchQuery.toLowerCase()
-      result = result.filter(
-        (d) =>
-          d.user.toLowerCase().includes(q) ||
-          d.category.toLowerCase().includes(q)
-      )
-    }
-
-    setFiltered(result)
-  }, [filters])
 
   return (
     <div className="w-full flex flex-col gap-3">
-      <TripsStats />
+      {/* Rider stats header (backed by /order-stats) */}
+      <OrderStats userId={riderId} />
+
       <div className="w-full flex flex-col items-center xl:flex-row gap-2 h-[96px] pt-6 pb-5 px-6 justify-between">
         <h2 className="text-[#191A1A] font-figtree font-bold text-[24px]/[32px] -tracking-[2%]">
           Orders
         </h2>
         <TripsFilters onFilterChange={handleFilterChange} />
       </div>
+
       <div className="rounded-md border">
         <div className="overflow-x-auto">
           <Table>
@@ -268,18 +144,34 @@ export function TripsTable() {
                 <TableHead>Status</TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody>
-              {pageItems.length > 0 ? (
-                pageItems.map((d) => (
-                  <TableRow
-                    key={d.id}
-                    className="cursor-pointer hover:bg-muted/50"
-                  >
-                    <TableCell>
-                      <div className="flex flex-col font-figtree font-semibold text-[12px]/[133%] -tracking-[2%]">
-                        {d.date}
 
-                        <span className="text-[10px]/[133%] font-normal">
+            <TableBody>
+              {isLoading ? (
+                <TableRow>
+                  <TableCell colSpan={9}>Loading…</TableCell>
+                </TableRow>
+              ) : isError ? (
+                <TableRow>
+                  <TableCell colSpan={9} className="text-red-600">
+                    Failed to load trips
+                    {(error as any)?.data?.message
+                      ? `: ${(error as any).data.message}`
+                      : ""}
+                    <button
+                      onClick={() => refetch()}
+                      className="ml-2 text-primary underline"
+                    >
+                      Retry
+                    </button>
+                  </TableCell>
+                </TableRow>
+              ) : rows.length > 0 ? (
+                rows.map((d) => (
+                  <TableRow key={d.id} className="hover:bg-muted/50">
+                    <TableCell>
+                      <div className="flex flex-col font-figtree font-semibold text-[12px]">
+                        {d.date}
+                        <span className="text-[10px] font-normal">
                           {d.time}
                         </span>
                       </div>
@@ -288,8 +180,7 @@ export function TripsTable() {
                     <TableCell>{d.rider}</TableCell>
                     <TableCell>{d.fee}</TableCell>
                     <TableCell>{d.packs}</TableCell>
-
-                    <TableCell className="max-w-[150px] whitespace-normal break-words">
+                    <TableCell className="max-w-[220px] whitespace-normal break-words">
                       {d.destination}
                     </TableCell>
                     <TableCell className="max-w-[150px] whitespace-normal break-words">
@@ -302,7 +193,7 @@ export function TripsTable() {
               ) : (
                 <TableRow>
                   <TableCell colSpan={9} className="h-24 text-center">
-                    No deliveries match your filters.
+                    No trips match your filters.
                   </TableCell>
                 </TableRow>
               )}
@@ -310,27 +201,26 @@ export function TripsTable() {
           </Table>
         </div>
 
+        {/* Pagination */}
         <div className="flex justify-center py-4">
           <Pagination>
             <PaginationContent className="flex gap-2">
-              {/* Previous */}
               <PaginationItem>
                 <PaginationPrevious
                   href="#"
                   onClick={(e) => {
                     e.preventDefault()
-                    changePage(currentPage - 1)
+                    changePage(page - 1)
                   }}
-                  disabled={currentPage === 1}
+                  disabled={page <= 1}
                 />
               </PaginationItem>
 
-              {/* Page numbers */}
               {pages.map((n) => (
                 <PaginationItem key={n}>
                   <PaginationLink
                     href="#"
-                    isActive={n === currentPage}
+                    isActive={n === page}
                     onClick={(e) => {
                       e.preventDefault()
                       changePage(n)
@@ -342,15 +232,14 @@ export function TripsTable() {
                 </PaginationItem>
               ))}
 
-              {/* Next */}
               <PaginationItem>
                 <PaginationNext
                   href="#"
                   onClick={(e) => {
                     e.preventDefault()
-                    changePage(currentPage + 1)
+                    changePage(page + 1)
                   }}
-                  disabled={currentPage === totalPages}
+                  disabled={page >= (pages.at(-1) ?? 1)}
                 />
               </PaginationItem>
             </PaginationContent>

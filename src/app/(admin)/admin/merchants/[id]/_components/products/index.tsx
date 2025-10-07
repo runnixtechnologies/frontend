@@ -15,7 +15,15 @@ export type FilterValues = {
   searchQuery: string
 }
 
-export default function Products() {
+type ProductsProps = {
+  merchantUserId: number | string
+  currentStoreId: number | string
+}
+
+export default function Products({
+  merchantUserId,
+  currentStoreId,
+}: ProductsProps) {
   const [activeTab, setActiveTab] = useState<TabKey>("foods")
   const [filters, setFilters] = useState<FilterValues>({
     type: "all-type",
@@ -24,21 +32,41 @@ export default function Products() {
     dateRange: "all-time",
     searchQuery: "",
   })
-  // Handle search query change
+
   const handleSearchChange = (query: string) => {
-    const newFilters = { ...filters, searchQuery: query }
-    setFilters(newFilters)
+    setFilters((prev) => ({ ...prev, searchQuery: query }))
   }
 
   return (
     <div className="flex flex-col gap-8">
-      <ProductSearch onSearch={handleSearchChange} placeholder="Search" />
+      <ProductSearch
+        onSearch={handleSearchChange}
+        placeholder="Search products..."
+      />
       <ProductTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
       <div className="w-full">
-        {activeTab === "foods" && <Foods />}
-        {activeTab === "sides" && <Sides />}
-        {activeTab === "packages" && <Packages />}
+        {activeTab === "foods" && (
+          <Foods
+            merchantUserId={merchantUserId}
+            currentStoreId={currentStoreId}
+            searchQuery={filters.searchQuery}
+          />
+        )}
+        {activeTab === "sides" && (
+          <Sides
+            merchantUserId={merchantUserId}
+            currentStoreId={currentStoreId}
+            searchQuery={filters.searchQuery}
+          />
+        )}
+        {activeTab === "packages" && (
+          <Packages
+            merchantUserId={merchantUserId}
+            currentStoreId={currentStoreId}
+            searchQuery={filters.searchQuery}
+          />
+        )}
       </div>
     </div>
   )

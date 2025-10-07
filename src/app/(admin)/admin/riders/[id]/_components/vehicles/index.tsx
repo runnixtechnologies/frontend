@@ -1,19 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import BikeImage from "./bikeImage"
 import VehicleInformation from "./form"
+import VehicleExterior from "./photos"
 import ProductTabs, { type TabKey } from "./tab"
 
-export type FilterValues = {
-  type: string
-  location: string
-  status: string[]
-  dateRange: string
-  searchQuery: string
-}
+type ProductsProps = { userId: number }
 
-export default function Products() {
+export default function Products({ userId }: ProductsProps) {
   const [activeTab, setActiveTab] = useState<TabKey>("form")
 
   return (
@@ -21,8 +15,8 @@ export default function Products() {
       <ProductTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
       <div className="w-full">
-        {activeTab === "form" && <VehicleInformation />}
-        {activeTab === "image" && <BikeImage />}
+        {activeTab === "form" && <VehicleInformation userId={userId} />}
+        {activeTab === "image" && <VehicleExterior userId={userId} />}
       </div>
     </div>
   )

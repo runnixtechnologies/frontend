@@ -101,7 +101,7 @@ export default function OTPPage() {
   const verifyErrText = verifyIsError ? getApiErrorMessage(verifyError) : null
   const resendErrText = resendIsError ? getApiErrorMessage(resendError) : null
   const missingIdentity = !email && !token
-  console.log("missingIdentity", missingIdentity)
+
   return (
     <div className="w-full flex flex-col min-h-[80vh]">
       <div className="w-full flex justify-center items-center">

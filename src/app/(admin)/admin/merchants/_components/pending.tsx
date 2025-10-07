@@ -59,7 +59,6 @@ export default function PendingPackageInformation({
 }: PackageProps) {
   const search = useSearchParams()
   const id = search.get("id") || "RN422G4342D43"
-  console.log("selectedDelivery", selectedDelivery)
   // Current stage: 1 (Trip Starts)
   const currentStage = 1
 

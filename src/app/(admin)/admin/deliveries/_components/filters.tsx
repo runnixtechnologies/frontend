@@ -33,8 +33,9 @@ export type DeliveryFilterValues = {
   searchQuery: string
 }
 
-interface DeliveryFiltersProps {
-  onFilterChange?: (filters: DeliveryFilterValues) => void
+export interface DeliveryFiltersProps {
+  value: DeliveryFilterValues
+  onFilterChange: (next: DeliveryFilterValues) => void
 }
 
 export function DeliveryFilters({ onFilterChange }: DeliveryFiltersProps) {

@@ -1,18 +1,19 @@
 "use client"
 
+import { Guard } from "@/components/auth/Guard"
+import { Button } from "@/components/ui/button"
+import { useGetAllAdminsQuery } from "@/lib/redux/api/admin"
 import { useEffect, useMemo, useState } from "react"
 import { SearchComponent } from "../../_components/search-component"
 import { AdminFilters, type AdminFilterValues } from "./_components/filters"
 import { InviteAdmin } from "./_components/invite-member"
 import { AdminTable } from "./_components/table"
-import { Button } from "@/components/ui/button"
-import { useGetAllAdminsQuery } from "@/lib/redux/api/admin"
-import { Guard } from "@/components/auth/Guard"
 
 export interface Admin {
   id: number
   name: string
   role: string
+  roleCode: string
   imgUrl: string
   email: string
   status: "Active" | "Pending"
@@ -51,12 +52,8 @@ export default function AdminPage() {
     refetch,
   } = useGetAllAdminsQuery(undefined)
 
-  // Safely grab the array of admins regardless of the hook's return type
   const raw: ApiAdmin[] = useMemo(() => {
     const r = resp as GetAllAdminsResponse | ApiAdmin[] | undefined
-    // prefer paginated shape -> data.data
-    // else maybe resp.data (non-paginated)
-    // else maybe the hook directly returns an array
     return (
       ((r as GetAllAdminsResponse | undefined)?.data?.data ??
         ((r as any)?.data as ApiAdmin[] | undefined) ??
@@ -73,10 +70,11 @@ export default function AdminPage() {
       "—"
     const email = a?.email ?? "—"
     const role = a?.role?.name ?? a?.role?.code ?? "Member"
+    const roleCode = (a?.role?.code ?? "member").toLowerCase()
     const imgUrl = a?.photo || "/images/riders/rider-1.jpg"
     const s = String(a?.status ?? "").toLowerCase()
     const status: Admin["status"] = s === "active" ? "Active" : "Pending"
-    return { id, name, role, imgUrl, email, status }
+    return { id, name, role, roleCode, imgUrl, email, status }
   }
 
   const admins: Admin[] = useMemo(() => raw.map(toLocal), [raw])
@@ -85,7 +83,7 @@ export default function AdminPage() {
   const [filters, setFilters] = useState<AdminFilterValues>({
     type: "all-type",
     status: [],
-    category: "",
+    category: "", // will be "super-admin" | "admin" | "customer-support" | ""
     dateRange: "all-time",
     searchQuery: "",
   })
@@ -93,11 +91,19 @@ export default function AdminPage() {
   useEffect(() => {
     let result = [...admins]
 
+    // role filter
+    if (filters.category) {
+      const wanted = filters.category.toLowerCase()
+      result = result.filter((d) => d.roleCode === wanted)
+    }
+
+    // status chips (Active/Pending)
     if (filters.status?.length) {
       const wanted = new Set(filters.status)
       result = result.filter((d) => wanted.has(d.status))
     }
 
+    // search by name/email/role
     if (filters.searchQuery.trim()) {
       const q = filters.searchQuery.toLowerCase()
       result = result.filter(
@@ -157,11 +163,11 @@ export default function AdminPage() {
                 onSearch={handleSearchChange}
                 placeholder="Search"
               />
-              <AdminFilters />
+              {/* ✅ Wire filter changes */}
+              <AdminFilters onFilterChange={setFilters} />
               <InviteAdmin />
             </div>
           </div>
-
           <AdminTable filters={filters} data={filtered} />
         </div>
       </div>

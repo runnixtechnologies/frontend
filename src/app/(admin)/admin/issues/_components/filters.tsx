@@ -18,7 +18,7 @@ import { Filter, X } from "lucide-react"
 import { useState } from "react"
 import { SearchComponent } from "../../../_components/search-component"
 
-export type MerchantFilterValues = {
+export type IssueFilterValues = {
   type: string
   location: string
   category: string
@@ -27,12 +27,12 @@ export type MerchantFilterValues = {
   searchQuery: string
 }
 
-interface MerchantFiltersProps {
-  onFilterChange?: (filters: MerchantFilterValues) => void
+interface IssueFiltersProps {
+  onFilterChange?: (filters: IssueFilterValues) => void
 }
 
-export function MerchantFilters({ onFilterChange }: MerchantFiltersProps) {
-  const [filters, setFilters] = useState<MerchantFilterValues>({
+export function IssueFilters({ onFilterChange }: IssueFiltersProps) {
+  const [filters, setFilters] = useState<IssueFilterValues>({
     type: "all-type",
     location: "all-locations",
     category: "",
@@ -129,7 +129,7 @@ export function MerchantFilters({ onFilterChange }: MerchantFiltersProps) {
   }
 
   // Count active filters to show badge
-  const updateActiveFiltersCount = (currentFilters: MerchantFilterValues) => {
+  const updateActiveFiltersCount = (currentFilters: IssueFilterValues) => {
     let count = 0
 
     if (currentFilters.type !== "all-type") count++
@@ -162,9 +162,7 @@ export function MerchantFilters({ onFilterChange }: MerchantFiltersProps) {
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle className="font-figtree">
-                Filter Merchants
-              </DialogTitle>
+              <DialogTitle className="font-figtree">Filter Issues</DialogTitle>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="space-y-2">

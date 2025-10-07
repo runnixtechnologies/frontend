@@ -1,70 +1,26 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useGetUserStatsQuery } from "@/lib/redux/api/users"
 import { cn } from "@/lib/utils"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 
-type TimePeriod = "Today" | "Last Week" | "This Month" | "Last Month"
-
-interface StatCardProps {
-  title: string
-  value: string | number
-  className?: string
-  timeFilter?: boolean
-  onTimeChange?: (period: TimePeriod) => void
-}
-
+/* ---------- tiny presentational card ---------- */
 function StatCard({
   title,
   value,
   className,
-  timeFilter = false,
-  onTimeChange,
-}: StatCardProps) {
-  const [selectedTime, setSelectedTime] = useState<TimePeriod>("Today")
-
-  const handleTimeChange = (value: string) => {
-    const period = value as TimePeriod
-    setSelectedTime(period)
-    if (onTimeChange) {
-      onTimeChange(period)
-    }
-  }
-
+}: {
+  title: string
+  value: string | number
+  className?: string
+}) {
   return (
     <Card className={cn("overflow-hidden gap-0", className)}>
       <CardHeader className="flex flex-row gap-4 items-center justify-between">
-        <CardTitle className="text-sm font-normal font-figtree text-[#666666] tracking-normal">
+        <CardTitle className="text-sm font-normal font-figtree text-[#666666]">
           {title}
         </CardTitle>
-        {timeFilter && (
-          <Select value={selectedTime} onValueChange={handleTimeChange}>
-            <SelectTrigger className="w-fit h-[28px] py-1 px-2 font-medium font-figtree text-xs text-[#666666] tracking-normal border rounded border-[#E6E6E6] bg-transparent">
-              <SelectValue placeholder="Today" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Today" className="font-figtree text-xs">
-                Today
-              </SelectItem>
-              <SelectItem value="Last Week" className="font-figtree text-xs">
-                Last Week
-              </SelectItem>
-              <SelectItem value="This Month" className="font-figtree text-xs">
-                This Month
-              </SelectItem>
-              <SelectItem value="Last Month" className="font-figtree text-xs">
-                Last Month
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        )}
       </CardHeader>
       <CardContent>
         <div className="text-[28px]/[120%] -tracking-[2%] font-figtree font-semibold text-[#191A1A]">
@@ -75,85 +31,84 @@ function StatCard({
   )
 }
 
-export function UserStats() {
-  // Sample data for different time periods - using regular objects instead of state
-  const newUserData = {
-    Today: "236",
-    "Last Week": "280",
-    "This Month": "490",
-    "Last Month": "320",
-  }
-
-  const suspendedData = {
-    Today: "75",
-    "Last Week": "412",
-    "This Month": "1,845",
-    "Last Month": "1,632",
-  }
-  const activeUserData = {
-    Today: "2,365",
-    "Last Week": "280",
-    "This Month": "490",
-    "Last Month": "320",
-  }
-
-  const inactiveData = {
-    Today: "75",
-    "Last Week": "412",
-    "This Month": "1,845",
-    "Last Month": "1,632",
-  }
-
-  const [newUserValue, setNewUserValue] = useState(newUserData["Today"])
-  const [suspendedValue, setSuspendedValue] = useState(suspendedData["Today"])
-  const [activeUserValue, setActiveUserValue] = useState(
-    activeUserData["Today"]
+/* ---------- skeleton while loading ---------- */
+function StatSkeleton() {
+  return (
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <Card key={i} className="overflow-hidden">
+          <CardHeader>
+            <div className="h-4 w-24 bg-gray-200 rounded animate-pulse" />
+          </CardHeader>
+          <CardContent>
+            <div className="h-8 w-20 bg-gray-100 rounded animate-pulse" />
+          </CardContent>
+        </Card>
+      ))}
+    </div>
   )
-  const [inactiveValue, setInactiveValue] = useState(inactiveData["Today"])
+}
 
-  const handleNewUserTimeChange = (period: TimePeriod) => {
-    setNewUserValue(newUserData[period])
+export function UserStats() {
+  const { data, isLoading, isError, error, refetch } = useGetUserStatsQuery({
+    userType: "user",
+  })
+
+  const { active, suspended, inactive, newlyAdded } = data ?? {
+    active: 0,
+    suspended: 0,
+    inactive: 0,
+    newlyAdded: 0,
   }
 
-  const handleSuspendedTimeChange = (period: TimePeriod) => {
-    setSuspendedValue(suspendedData[period])
+  // Always call hooks at top-level
+  const total = useMemo(
+    () => (active ?? 0) + (suspended ?? 0) + (inactive ?? 0),
+    [active, suspended, inactive]
+  )
+
+  if (isLoading) {
+    return <StatSkeleton />
   }
 
-  const handleActiveUserTimeChange = (period: TimePeriod) => {
-    setActiveUserValue(activeUserData[period])
+  if (isError) {
+    return (
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+        <Card className="sm:col-span-2 lg:col-span-3 xl:col-span-5">
+          <CardHeader>
+            <CardTitle className="text-sm font-figtree text-red-600">
+              Failed to load user stats
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-muted-foreground">
+                {(error as any)?.data?.message ||
+                  (error as any)?.error ||
+                  "Please try again."}
+              </span>
+              <button
+                className="text-sm font-medium text-primary underline"
+                onClick={() => refetch()}
+              >
+                Retry
+              </button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
-  const handleInactiveTimeChange = (period: TimePeriod) => {
-    setInactiveValue(inactiveData[period])
-  }
+  const fmt = (n: number) => n.toLocaleString()
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-      <StatCard title="Total Users" value="336" />
-      <StatCard
-        title="New Users"
-        value={newUserValue}
-        timeFilter={true}
-        onTimeChange={handleNewUserTimeChange}
-      />
-      <StatCard
-        title="Active Users"
-        value={activeUserValue}
-        timeFilter={true}
-        onTimeChange={handleActiveUserTimeChange}
-      />
-      <StatCard
-        title="Inactive Users"
-        value={inactiveValue}
-        timeFilter={true}
-        onTimeChange={handleInactiveTimeChange}
-      />
-      <StatCard
-        title="Suspended"
-        value={suspendedValue}
-        timeFilter={true}
-        onTimeChange={handleSuspendedTimeChange}
-      />
+      <StatCard title="Total Users" value={fmt(total)} />
+      <StatCard title="New Users" value={fmt(newlyAdded)} />
+      <StatCard title="Active Users" value={fmt(active)} />
+      <StatCard title="Inactive Users" value={fmt(inactive)} />
+      <StatCard title="Suspended" value={fmt(suspended)} />
     </div>
   )
 }

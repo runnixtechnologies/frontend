@@ -1,109 +1,52 @@
+"use client"
+
 import { Checkbox } from "@/components/ui/checkbox"
 import { Switch } from "@/components/ui/switch"
 import Image from "next/image"
-import React from "react"
+import { useGetFoodsQuery, type Food } from "@/lib/redux/api/products"
 
-const foods = [
-  {
-    id: 1,
-    name: "Jollof Rice + Beef",
-    img: "/jollof-rice.png",
-    price: "₦10,240",
-    discount: "₦9,500",
-    orders: 50,
-  },
-  {
-    id: 2,
-    name: "Jollof Rice + Beef",
-    price: "₦5,120",
-    discount: "₦4,500",
-    img: "/white-rice.png",
-    orders: 100,
-  },
+type FoodsProps = {
+  merchantUserId: number | string
+  currentStoreId: number | string
+  searchQuery: string
+}
 
-  {
-    id: 3,
-    name: "Jollof Rice + Beef",
-    price: "₦10,240",
-    discount: "₦8,500",
-    img: "/white-rice.png",
-    orders: 32,
-  },
-  {
-    id: 4,
-    name: "White Rice + Chiken",
-    price: "₦5,120",
-    discount: "₦4,500",
-    img: "/white-rice.png",
-    orders: 81,
-  },
-  {
-    id: 5,
-    name: "White Rice + Chiken",
-    price: "₦5,120",
-    discount: "₦4,500",
-    img: "/white-rice.png",
-    orders: 81,
-  },
-  {
-    id: 6,
-    name: "White Rice + Chiken",
-    price: "₦5,120",
-    discount: "₦2,500",
-    img: "/white-rice.png",
-    orders: 81,
-  },
-  {
-    id: 7,
-    name: "White Rice + Chiken",
-    price: "₦5,120",
-    discount: "₦3,900",
-    img: "/white-rice.png",
-    orders: 81,
-  },
-  {
-    id: 8,
-    name: "White Rice + Chiken",
-    price: "₦5,120",
-    discount: "₦4,400",
-    img: "/white-rice.png",
-    orders: 81,
-  },
-  {
-    id: 9,
-    name: "White Rice + Chiken",
-    price: "₦5,120",
-    discount: "₦4,500",
-    img: "/white-rice.png",
-    orders: 81,
-  },
-  {
-    id: 10,
-    name: "White Rice + Chiken",
-    price: "₦8,120",
-    discount: "₦7,500",
-    img: "/white-rice.png",
-    orders: 81,
-  },
-]
-export default function Foods() {
+export default function Foods({
+  merchantUserId,
+  currentStoreId,
+  searchQuery,
+}: FoodsProps) {
+  const { data, isLoading, isError } = useGetFoodsQuery({
+    userid: merchantUserId,
+    storeid: currentStoreId,
+    search: searchQuery,
+    status: "active",
+  })
+
+  const foods = data?.rows ?? []
+
   return (
     <div className="flex flex-col gap-8">
-      <h4 className="font-figtree font-semibold text-[20px]/[120%] tracking-normal text-[#232323]">
-        {foods?.length} Items
+      <h4 className="font-figtree font-semibold text-[20px] text-[#232323]">
+        {isLoading
+          ? "Loading..."
+          : isError
+          ? "Failed to load"
+          : `${foods.length} Items`}
       </h4>
+
       <div className="flex flex-col gap-3">
-        {foods?.map((item, index) => (
+        {foods.map((item: Food) => (
           <div
-            key={index}
+            key={item.id}
             className="flex gap-2 pb-2 border-b border-[#EFEFEF]"
           >
-            <Checkbox />{" "}
-            <div key={index} className="w-full flex items-start">
+            <Checkbox />
+            <div className="w-full flex items-start">
               <div className="mr-3">
                 <div className="w-12 h-12 bg-amber-200 rounded-md overflow-hidden">
                   <Image
-                    src={item.img}
+                    src={item.photo || "/placeholder.svg"}
                     alt={item.name}
                     width={40}
                     height={40}
@@ -112,27 +55,35 @@ export default function Foods() {
                 </div>
               </div>
               <div className="w-full flex-grow">
-                <p className="font-semibold font-figtree text-[16px]/[120%] tracking-normal text-[#232323]">
+                <p className="font-semibold text-[16px] text-[#232323]">
                   {item.name}
                 </p>
-                <p className="font-semibold font-figtree text-[14px]/[120%] tracking-normal text-[#525252]">
-                  {item.orders} orders
+                <p className="font-semibold text-[14px] text-[#525252]">
+                  {item.order_count ?? 0} orders
                 </p>
                 <div className="w-full flex justify-between items-center">
                   <div className="flex gap-1">
-                    <p className="text-[14px]/[120%] tracking-normal font-semibold font-figtree text-[#3D3D3D]">
-                      {item.price}
+                    <p className="text-[14px] font-semibold text-[#3D3D3D]">
+                      ₦{Number(item.price).toLocaleString("en-NG")}
                     </p>
-                    <p className="text-[12px]/[120%] tracking-normal font-normal font-figtree text-[#989898] line-through">
-                      {item.discount}
-                    </p>
+                    {item.discount && Number(item.discount) > 0 && (
+                      <p className="text-[12px] font-normal text-[#989898] line-through">
+                        ₦{Number(item.discount).toLocaleString("en-NG")}
+                      </p>
+                    )}
                   </div>
-                  <Switch />
+                  <Switch defaultChecked={item.status === "active"} />
                 </div>
               </div>
             </div>
           </div>
         ))}
+
+        {!isLoading && !isError && foods.length === 0 && (
+          <p className="text-sm text-gray-500 text-center py-6">
+            No foods found.
+          </p>
+        )}
       </div>
     </div>
   )

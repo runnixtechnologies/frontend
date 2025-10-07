@@ -1,6 +1,6 @@
 "use client"
 
-import { ReactNode, useState } from "react"
+import { ReactNode, useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import {
@@ -16,6 +16,7 @@ import {
   EncircleUsers,
 } from "@/components/svgs"
 import { ChevronDownIcon } from "lucide-react"
+import { useGetRecordCountsQuery } from "@/lib/redux/api/dashboard"
 
 type TimePeriod = "Today" | "Last Week" | "This Month" | "Last Month"
 
@@ -41,9 +42,7 @@ function StatCard({
   const handleTimeChange = (value: string) => {
     const period = value as TimePeriod
     setSelectedTime(period)
-    if (onTimeChange) {
-      onTimeChange(period)
-    }
+    onTimeChange?.(period)
   }
 
   return (
@@ -109,97 +108,75 @@ function StatCard({
 }
 
 export function DashboardStats() {
-  const revenueData = {
-    Today: "2,365",
-    "Last Week": "14,280",
-    "This Month": "52,490",
-    "Last Month": "48,320",
+  const { data, isLoading, isError } = useGetRecordCountsQuery()
+
+  const [revenue, setRevenue] = useState<number | string>(0)
+  const [orders, setOrders] = useState<number | string>(0)
+  const [users, setUsers] = useState<number | string>(0)
+  const [riders, setRiders] = useState<number | string>(0)
+  const [merchants, setMerchants] = useState<number | string>(0)
+
+  useEffect(() => {
+    if (data) {
+      setRevenue(data.revenue)
+      setOrders(data.orders)
+      setUsers(data.users)
+      setRiders(data.riders)
+      setMerchants(data.merchants)
+    }
+  }, [data])
+
+  if (isLoading) {
+    return (
+      <div className="bg-white grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 py-5 px-4 rounded-xl">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div
+            key={i}
+            className="h-[92px] rounded-[12px] bg-[#F7F6FC] animate-pulse"
+          />
+        ))}
+      </div>
+    )
   }
 
-  const ordersData = {
-    Today: "75",
-    "Last Week": "412",
-    "This Month": "1,845",
-    "Last Month": "1,632",
-  }
-  const usersData = {
-    Today: "75",
-    "Last Week": "412",
-    "This Month": "1,845",
-    "Last Month": "1,632",
-  }
-  const ridersData = {
-    Today: "75",
-    "Last Week": "412",
-    "This Month": "1,845",
-    "Last Month": "1,632",
-  }
-  const merchantsData = {
-    Today: "75",
-    "Last Week": "412",
-    "This Month": "1,845",
-    "Last Month": "1,632",
+  if (isError) {
+    return (
+      <div className="bg-white py-5 px-4 rounded-xl">
+        <p className="text-sm text-red-600">Failed to load dashboard stats.</p>
+      </div>
+    )
   }
 
-  const [revenueValue, setRevenueValue] = useState(revenueData["This Month"])
-  const [ordersValue, setOrdersValue] = useState(ordersData["This Month"])
-  const [usersValue, setUsersValue] = useState(usersData["This Month"])
-  const [ridersValue, setRidersValue] = useState(ridersData["This Month"])
-  const [merchantsValue, setMerchantsValue] = useState(
-    merchantsData["This Month"]
-  )
-
-  const handleRevenueTimeChange = (period: TimePeriod) => {
-    setRevenueValue(revenueData[period])
-  }
-
-  const handleOrdersTimeChange = (period: TimePeriod) => {
-    setOrdersValue(ordersData[period])
-  }
-  const handleUsersTimeChange = (period: TimePeriod) => {
-    setUsersValue(usersData[period])
-  }
-  const handleRidersTimeChange = (period: TimePeriod) => {
-    setRidersValue(ridersData[period])
-  }
-  const handleMerchantsTimeChange = (period: TimePeriod) => {
-    setMerchantsValue(merchantsData[period])
-  }
   return (
     <div className="bg-white grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 py-5 px-4 rounded-xl">
       <StatCard
         title="Revenue"
-        value={revenueValue}
-        timeFilter={true}
-        onTimeChange={handleRevenueTimeChange}
+        value={revenue}
+        timeFilter
         icon={<CircleDollars />}
       />
       <StatCard
         title="Orders"
-        value={ordersValue}
-        timeFilter={true}
-        onTimeChange={handleOrdersTimeChange}
+        value={orders}
+        timeFilter
         icon={<EncircledShoppingBag />}
       />
       <StatCard
         title="Users"
-        value={usersValue}
-        timeFilter={true}
-        onTimeChange={handleUsersTimeChange}
+        value={users}
+        timeFilter
         icon={<EncircleUsers />}
       />
       <StatCard
         title="Riders"
-        value={ridersValue}
-        timeFilter={true}
-        onTimeChange={handleRidersTimeChange}
+        value={riders}
+        timeFilter
         icon={<EncircledShoppingBag />}
       />
       <StatCard
         title="Merchants"
-        value={merchantsValue}
-        timeFilter={true}
-        onTimeChange={handleMerchantsTimeChange}
+        value={merchants}
+        timeFilter
         icon={<EncircledShoppingBag />}
       />
     </div>

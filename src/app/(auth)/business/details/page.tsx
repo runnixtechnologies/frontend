@@ -131,12 +131,9 @@ export default function BusinessDetailsForm() {
     try {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000))
-      console.log("Form submitted:", formData)
       // Handle successful submission here
-      alert("Business details submitted successfully!")
     } catch (error) {
       console.error("Submission error:", error)
-      alert("An error occurred. Please try again.")
     } finally {
       // setIsSubmitting(false)
     }

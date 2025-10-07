@@ -5,7 +5,6 @@ const isProd = process.env.NODE_ENV === "production"
 export async function POST(req: Request) {
   const { token, role } = (await req.json()) as { token: string; role?: string }
   const res = NextResponse.json({ ok: true })
-  console.log("token,role from session", token, role)
   // httpOnly PAT for server-side guards (middleware/layout)
   res.cookies.set("auth:token", token, {
     httpOnly: true,

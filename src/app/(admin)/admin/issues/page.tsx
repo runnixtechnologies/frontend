@@ -1,15 +1,13 @@
+// src/app/(admin)/admin/issues/page.tsx
 "use client"
 
+import { useGetIssuesQuery } from "@/lib/redux/api/issues"
 import { useEffect, useMemo, useState } from "react"
-import {
-  MerchantFilters,
-  type MerchantFilterValues,
-} from "./_components/filters"
-import { MerchantStats } from "./_components/stats"
-import { MerchantTable } from "./_components/table"
-import MerchantTabs, { TabKey } from "./_components/tabs"
+import { IssueFilters, type IssueFilterValues } from "./_components/filters"
+import { IssuesTable } from "./_components/table"
+import IssueTabs, { TabKey } from "./_components/tabs"
 
-export interface Merchant {
+export interface IssuesProps {
   id: number
   name: string
   date: string
@@ -21,107 +19,109 @@ export interface Merchant {
   orderId: string
   imgUrl: string
   status: "Pending" | "InProgress" | "Resolved"
+  assigned_role_id?: number | null
 }
 
-// sample data...
-const issuesData: Merchant[] = [
+/** seed/demo data (used as visual fallback while first load occurs) */
+const seed: IssuesProps[] = [
   {
     id: 1,
+    name: "Tile Bar",
     date: "Sat 15, Aug",
     time: "4:30 PM",
-    name: "Tile Bar",
-    category: "Deliveries / Order",
-    message: `Risus adipiscing euismod viverra sem pretium. Hac sit lobortis mi sed vitae at quam. Ut donec tincidunt habitant aliquet scelerisque lorem tellus.`,
     sender: "Bilkis Illiyas",
-    orderId: "64ff34dd",
-    imgUrl: "/images/merchants/merchant-1.png",
-    status: "Resolved",
     type: "User",
+    category: "Deliveries / Order",
+    message: "Lorem…",
+    orderId: "64ff34dd",
+    imgUrl: "/images/Issues/Issue-1.png",
+    status: "Resolved",
   },
   {
     id: 2,
     name: "Metro Groceries",
     date: "Sat 15, Aug",
     time: "4:30 PM",
-    category: "Deliveries / Order",
-    message: ` Risus adipiscing euismod viverra sem pretium. Hac sit lobortis mi sed vitae at quam. Ut donec tincidunt habitant aliquet scelerisque lorem tellus.`,
     sender: "Teekay Micheal",
+    type: "Issue",
+    category: "Deliveries / Order",
+    message: "Lorem…",
     orderId: "64ff34dd",
-    imgUrl: "/images/merchants/merchant-2.png",
+    imgUrl: "/images/Issues/Issue-2.png",
     status: "Resolved",
-    type: "Merchant",
   },
   {
     id: 3,
-    name: "user Hub",
+    name: "User Hub",
     date: "Sat 15, Aug",
     time: "4:30 PM",
-    category: "Patrtnership/Business",
-    message: ` Risus adipiscing euismod viverra sem pretium. Hac sit lobortis mi sed vitae at quam. Ut donec tincidunt habitant aliquet scelerisque lorem tellus.`,
     sender: "Moses Bonas",
-    orderId: "64ff34dd",
-    imgUrl: "/images/merchants/merchant-3.png",
-    status: "Resolved",
     type: "User",
+    category: "Partnership/Business",
+    message: "Lorem…",
+    orderId: "64ff34dd",
+    imgUrl: "/images/Issues/Issue-3.png",
+    status: "Resolved",
   },
   {
     id: 4,
     name: "Tech World",
     date: "Sat 15, Aug",
     time: "4:30 PM",
-    category: "Deliveries / Order",
-    message: ` Risus adipiscing euismod viverra sem pretium. Hac sit lobortis mi sed vitae at quam. Ut donec tincidunt habitant aliquet scelerisque lorem tellus.`,
     sender: "Musa Isa",
+    type: "Issue",
+    category: "Deliveries / Order",
+    message: "Lorem…",
     orderId: "64ff34dd",
-    imgUrl: "/images/merchants/merchant-4.png",
+    imgUrl: "/images/Issues/Issue-4.png",
     status: "Resolved",
-    type: "Merchant",
   },
   {
     id: 5,
     name: "Gourmet Delights",
     date: "Sat 15, Aug",
     time: "4:30 PM",
-    category: "General Enquiries",
-    message: `Risus adipiscing euismod viverra sem pretium. Hac sit lobortis mi sed vitae at quam. Ut donec tincidunt habitant aliquet scelerisque lorem tellus.`,
     sender: "Mary John",
-    orderId: "64ff34dd",
-    imgUrl: "/images/merchants/merchant-5.png",
-    status: "Resolved",
     type: "Rider",
+    category: "General Enquiries",
+    message: "Lorem…",
+    orderId: "64ff34dd",
+    imgUrl: "/images/Issues/Issue-5.png",
+    status: "Resolved",
   },
   {
     id: 6,
     name: "Pending Shop",
     date: "Sat 15, Aug",
     time: "4:30 PM",
-    category: "Operations",
-    message: `Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi, natus!`,
     sender: "John Doe",
-    orderId: "123ff34dd",
-    imgUrl: "/images/merchants/merchant-6.png",
-    status: "Pending",
     type: "Rider",
+    category: "Operations",
+    message: "Lorem…",
+    orderId: "123ff34dd",
+    imgUrl: "/images/Issues/Issue-6.png",
+    status: "Pending",
   },
   {
     id: 7,
     name: "Suspended Store",
     date: "Sat 15, Aug",
     time: "4:30 PM",
-    category: "General Enquiries",
-    message: ` Risus adipiscing euismod viverra sem pretium. Hac sit lobortis mi sed vitae at quam. Ut donec tincidunt habitant aliquet scelerisque lorem tellus.`,
     sender: "Bilkis Illiyas",
+    type: "Issue",
+    category: "General Enquiries",
+    message: "Lorem…",
     orderId: "64ff34dd",
-    imgUrl: "/images/merchants/merchant-2.png",
+    imgUrl: "/images/Issues/Issue-2.png",
     status: "InProgress",
-    type: "Merchant",
   },
 ]
 
-export default function MerchantsPage() {
+export default function IssuesPage() {
   const [activeTab, setActiveTab] = useState<TabKey>("all")
-  const [filtered, setFiltered] = useState<Merchant[]>(issuesData)
-  const [filters, setFilters] = useState<MerchantFilterValues>({
+  const [rows, setRows] = useState<IssuesProps[]>(seed)
+  const [filtered, setFiltered] = useState<IssuesProps[]>(rows)
+  const [filters, setFilters] = useState<IssueFilterValues>({
     type: "all-type",
     location: "all-locations",
     status: [],
@@ -130,29 +130,41 @@ export default function MerchantsPage() {
     searchQuery: "",
   })
 
-  // Pre-calc counts for display in the tabs
+  // Fetch issues from backend (adjust params if needed)
+  const { data: issuesResp, isFetching } = useGetIssuesQuery({
+    page: 1,
+    per_page: 100,
+  })
+
+  // Use backend rows when available
+  useEffect(() => {
+    if (issuesResp?.rows && issuesResp.rows.length >= 0) {
+      // issuesResp.rows is already normalized in the API slice (Issue shape)
+      setRows(issuesResp.rows as unknown as IssuesProps[])
+    }
+  }, [issuesResp])
+
+  // Tab counts reflect the current "rows"
   const tabCounts = useMemo<Record<TabKey, number>>(
     () => ({
-      all: issuesData.length,
-      resolved: issuesData.filter((d) => d.status === "Resolved").length,
-      pending: issuesData.filter((d) => d.status === "Pending").length,
-      "in-progress": issuesData.filter((d) => d.status === "InProgress").length,
+      all: rows.length,
+      resolved: rows.filter((d) => d.status === "Resolved").length,
+      pending: rows.filter((d) => d.status === "Pending").length,
+      "in-progress": rows.filter((d) => d.status === "InProgress").length,
     }),
-    []
+    [rows]
   )
 
-  // Recompute filtered list whenever activeTab or other filters change
+  // Filtering pipeline
   useEffect(() => {
-    let result = [...issuesData]
+    let result = [...rows]
 
-    // 1) Tab‐driven status filter
     if (activeTab !== "all") {
       const statusLabel = (activeTab.charAt(0).toUpperCase() +
-        activeTab.slice(1)) as Merchant["status"]
+        activeTab.slice(1)) as IssuesProps["status"]
       result = result.filter((d) => d.status === statusLabel)
     }
 
-    // 2) Location filter
     if (filters.location !== "all-locations") {
       const locMap: Record<string, number[]> = {
         north: [1, 5, 9, 13, 17, 21, 25, 29],
@@ -163,12 +175,10 @@ export default function MerchantsPage() {
       result = result.filter((d) => locMap[filters.location]?.includes(d.id))
     }
 
-    // 3) Category dropdown
     if (filters.category) {
       result = result.filter((d) => d.category === filters.category)
     }
 
-    // 4) Search
     if (filters.searchQuery.trim()) {
       const q = filters.searchQuery.toLowerCase()
       result = result.filter(
@@ -180,33 +190,36 @@ export default function MerchantsPage() {
       )
     }
 
+    if (filters.status.length > 0) {
+      result = result.filter((d) => filters.status.includes(d.status))
+    }
+
     setFiltered(result)
-  }, [activeTab, filters])
+  }, [activeTab, filters, rows])
 
-  // Merge new filter values
-  const handleFilterChange = (newFilters: Partial<MerchantFilterValues>) => {
-    setFilters((prev) => ({
-      ...prev,
-      ...newFilters,
-    }))
+  const handleFilterChange = (next: Partial<IssueFilterValues>) => {
+    setFilters((prev) => ({ ...prev, ...next }))
   }
-
   return (
     <div className="flex flex-col gap-6 p-4 md:p-6">
-      <MerchantStats />
-
       <div className="w-full bg-white rounded-lg border flex flex-col gap-3">
         <div className="w-full flex justify-between gap-2 pt-6 pb-5 px-6">
-          <MerchantTabs
+          <IssueTabs
             activeTab={activeTab}
             setActiveTab={setActiveTab}
             size={filtered.length}
             tabCounts={tabCounts}
           />
-          <MerchantFilters onFilterChange={handleFilterChange} />
+          <IssueFilters onFilterChange={handleFilterChange} />
         </div>
 
-        <MerchantTable filters={filters} data={filtered} />
+        <IssuesTable filters={filters} data={filtered} />
+
+        {isFetching && (
+          <div className="px-6 pb-6 text-sm text-muted-foreground">
+            Refreshing…
+          </div>
+        )}
       </div>
     </div>
   )

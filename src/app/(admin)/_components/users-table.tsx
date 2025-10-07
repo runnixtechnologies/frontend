@@ -1,0 +1,223 @@
+"use client"
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { Eye, MoreVertical } from "lucide-react"
+import Link from "next/link"
+import { useEffect, useState } from "react"
+import type { UserFilterValues } from "./users-filters"
+import { User } from "@/types/users"
+
+interface UserTableProps {
+  filters?: UserFilterValues
+  data?: User[]
+  page: "users" | "merchants" | "riders"
+}
+
+export function UsersTable({ filters, data = [], page }: UserTableProps) {
+  // -- state
+  const [filtered, setFiltered] = useState(data)
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 10
+  const [totalPages, setTotalPages] = useState(1)
+
+  // -- apply filters & recalc pagination
+  useEffect(() => {
+    let result = [...data]
+
+    if (filters) {
+      const { searchQuery } = filters
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase()
+        result = result.filter(
+          (d) =>
+            d.name.toLowerCase().includes(q) ||
+            d.phone.toLowerCase().includes(q) ||
+            d.email.toLowerCase().includes(q) ||
+            d.gender.toLowerCase().includes(q)
+        )
+      }
+
+      // dateRange logic here...
+    }
+
+    setFiltered(result)
+    const pages = Math.max(1, Math.ceil(result.length / itemsPerPage))
+    setTotalPages(pages)
+    setCurrentPage((p) => Math.min(p, pages))
+  }, [filters, data, itemsPerPage])
+
+  // -- slicing for current page
+  const start = (currentPage - 1) * itemsPerPage
+  const pageItems = filtered.slice(start, start + itemsPerPage)
+
+  // -- handlers
+  const changePage = (p: number) => {
+    const next = Math.max(1, Math.min(totalPages, p))
+    setCurrentPage(next)
+    document
+      .querySelector(".rounded-md.border")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" })
+  }
+
+  // -- page number array
+  const pages = Array.from({ length: totalPages }, (_, i) => i + 1)
+  return (
+    <>
+      <div className="rounded-md border">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-[#EFEFEF] py-3 px-6 border-0 border-t border-b border-[#F2F2F2]">
+                <TableHead>User Name</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>Email Address</TableHead>
+                <TableHead>Phone Number</TableHead>
+                <TableHead>Gender</TableHead>
+                <TableHead>No. of Trips</TableHead>
+                <TableHead>Earnings</TableHead>
+                <TableHead>Date Joined</TableHead>
+                <TableHead className="w-[50px]"></TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {pageItems.length > 0 ? (
+                pageItems.map((user) => (
+                  <TableRow
+                    key={user.id}
+                    className="cursor-pointer hover:bg-muted/50"
+                  >
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        <Avatar className="h-6 w-6">
+                          <AvatarImage
+                            src={user.imgUrl || "/placeholder.svg"}
+                            alt="user"
+                          />
+                          <AvatarFallback className="capitalize">
+                            {user.name.charAt(0)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="font-figtree font-normal text-[12px]/[133%] -tracking-[2%] capitalize">
+                          {user.name}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>{user.type}</TableCell>
+                    <TableCell>{user.email}</TableCell>
+                    <TableCell>{user.phone}</TableCell>
+                    <TableCell>{user.gender}</TableCell>
+                    <TableCell>{user.trips}</TableCell>
+                    <TableCell>{user.earning}</TableCell>
+                    <TableCell>{user.joined}</TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger className="flex h-8 w-8 items-center justify-center rounded-md bg-transparent p-0 text-base font-medium transition-colors hover:bg-muted focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 cursor-pointer">
+                          <MoreVertical className="h-4 w-4" />
+                          <span className="sr-only">Open menu</span>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-[180px]">
+                          <DropdownMenuItem className="cursor-pointer">
+                            <Link
+                              href={
+                                page === "users"
+                                  ? `/admin/users/${user.id}`
+                                  : page === "merchants"
+                                  ? `/admin/merchants/${user.id}`
+                                  : page === "riders"
+                                  ? `/admin/riders/${user.id}`
+                                  : ""
+                              }
+                              className="flex items-center"
+                            >
+                              <Eye className="mr-2 h-4 w-4" />
+                              <span>View Details</span>
+                            </Link>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={9} className="h-24 text-center">
+                    No users match your filters.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+
+        <div className="flex justify-center py-4">
+          <Pagination>
+            <PaginationContent className="flex gap-2">
+              {/* Previous */}
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    changePage(currentPage - 1)
+                  }}
+                  disabled={currentPage === 1}
+                />
+              </PaginationItem>
+
+              {/* Page numbers */}
+              {pages.map((n) => (
+                <PaginationItem key={n}>
+                  <PaginationLink
+                    href="#"
+                    isActive={n === currentPage}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      changePage(n)
+                    }}
+                    size="icon"
+                  >
+                    {n}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+
+              {/* Next */}
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    changePage(currentPage + 1)
+                  }}
+                  disabled={currentPage === totalPages}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      </div>
+    </>
+  )
+}

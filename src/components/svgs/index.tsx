@@ -1357,7 +1357,7 @@ export function LockIcon() {
     </svg>
   )
 }
-export function ImageIcon() {
+export function ImageIcon({ className }: IconProps) {
   return (
     <svg
       width="48"
@@ -1365,6 +1365,7 @@ export function ImageIcon() {
       viewBox="0 0 48 48"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      className={className}
     >
       <rect
         x="0.510638"

@@ -5,7 +5,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {
@@ -24,11 +23,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Ban, Eye, MoreVertical, Trash, UserPlus } from "lucide-react"
+import { Eye, MoreVertical } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
-import type { User } from "../page"
 import type { UserFilterValues } from "./filters"
+import { User } from "@/types/users"
 
 interface UserTableProps {
   filters?: UserFilterValues
@@ -47,22 +46,7 @@ export function UsersTable({ filters, data = [] }: UserTableProps) {
     let result = [...data]
 
     if (filters) {
-      const { location, status, searchQuery } = filters
-
-      if (location !== "all-locations") {
-        const locMap: Record<string, number[]> = {
-          north: [1, 5, 9, 13, 17, 21, 25, 29],
-          south: [2, 6, 10, 14, 18, 22, 26, 30],
-          east: [3, 7, 11, 15, 19, 23, 27],
-          west: [4, 8, 12, 16, 20, 24, 28],
-        }
-        result = result.filter((d) => locMap[location]?.includes(d.id))
-      }
-
-      if (status.length > 0) {
-        result = result.filter((d) => status.includes(d.status))
-      }
-
+      const { searchQuery } = filters
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase()
         result = result.filter(
@@ -98,23 +82,6 @@ export function UsersTable({ filters, data = [] }: UserTableProps) {
 
   // -- page number array
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1)
-
-  // -- action handlers
-  const handleViewDetails = (User: User) => {
-    console.log("View details for:", User.name)
-    // Implement view details logic
-  }
-
-  const handleSuspendUser = (User: User) => {
-    console.log("Edit User:", User.name)
-    // Implement edit logic
-  }
-
-  const handleDelete = (User: User) => {
-    console.log("Delete User:", User.name)
-    // Implement delete logic with confirmation
-  }
-
   return (
     <>
       <div className="rounded-md border">
@@ -168,43 +135,14 @@ export function UsersTable({ filters, data = [] }: UserTableProps) {
                           <span className="sr-only">Open menu</span>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-[180px]">
-                          <DropdownMenuItem
-                            onClick={() => handleViewDetails(user)}
-                            className="cursor-pointer"
-                          >
+                          <DropdownMenuItem className="cursor-pointer">
                             <Link
-                              href={`/users/${user.id}`}
+                              href={`/admin/users/${user.id}`}
                               className="flex items-center"
                             >
                               <Eye className="mr-2 h-4 w-4" />
                               <span>View Details</span>
                             </Link>
-                          </DropdownMenuItem>
-
-                          {user.status === "Active" ? (
-                            <DropdownMenuItem
-                              onClick={() => handleSuspendUser(user)}
-                              className="cursor-pointer"
-                            >
-                              <Ban className="mr-2 h-4 w-4" />
-                              <span>Suspend User</span>
-                            </DropdownMenuItem>
-                          ) : (
-                            <DropdownMenuItem
-                              onClick={() => handleSuspendUser(user)}
-                              className="cursor-pointer"
-                            >
-                              <UserPlus className="mr-2 h-4 w-4" />
-                              <span>Recall User</span>
-                            </DropdownMenuItem>
-                          )}
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            onClick={() => handleDelete(user)}
-                            className="cursor-pointer text-destructive focus:text-destructive"
-                          >
-                            <Trash className="mr-2 h-4 w-4" />
-                            <span>Delete</span>
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>

@@ -14,6 +14,10 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
+        hostname: "admin-api.runnix.africa",
+      },
+      {
+        protocol: "https",
         hostname: "images.ctfassets.net",
         pathname: "/**",
       },

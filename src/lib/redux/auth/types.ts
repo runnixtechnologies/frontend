@@ -9,8 +9,8 @@ export interface Role {
 
 export interface User {
   id: number
-  firstname: string
-  lastname: string
+  name: string
+  type: string
   username: string | null
   email: string
   role_id: number

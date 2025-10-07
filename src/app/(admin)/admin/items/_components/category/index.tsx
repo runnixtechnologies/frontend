@@ -30,6 +30,7 @@ export function Category({ data, onFilterChange }: ItemFiltersProps) {
     dateRange: "all-time",
     searchQuery: "",
   })
+
   const items: Item[] =
     initialItems?.filter((item) => item.category === selectedItem) || []
 
@@ -69,19 +70,22 @@ export function Category({ data, onFilterChange }: ItemFiltersProps) {
           </div>
           <SearchCategory onSearch={handleSearchChange} placeholder="Search" />
           <div className="w-full flex flex-col">
-            {data?.categories?.map((item, idx) => (
-              <div
-                key={idx}
-                onClick={() => setSelectedItem(item)}
-                className={`h-[44px] rounded-[2px]  ${
-                  selectedItem === item
-                    ? "bg-[#F7F6FC] border-l-2 border-l-primary  border-b border-b-[#EFEFEF] pl-1"
-                    : "bg-white border-b border-[#EFEFEF]"
-                } font-figtree font-light texr-[14px]/[140%] -tracking-[2%] flex items-center cursor-pointer`}
-              >
-                {item}
-              </div>
-            ))}
+            {data?.categories?.map((item, idx) => {
+              console.log("item", item)
+              return (
+                <div
+                  key={idx}
+                  onClick={() => setSelectedItem(item)}
+                  className={`h-[44px] rounded-[2px]  ${
+                    selectedItem === item
+                      ? "bg-[#F7F6FC] border-l-2 border-l-primary  border-b border-b-[#EFEFEF] pl-1"
+                      : "bg-white border-b border-[#EFEFEF]"
+                  } font-figtree font-light texr-[14px]/[140%] -tracking-[2%] flex items-center cursor-pointer`}
+                >
+                  {item}
+                </div>
+              )
+            })}
           </div>
         </div>
 

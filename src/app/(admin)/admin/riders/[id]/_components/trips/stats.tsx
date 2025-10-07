@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { useGetOrderStatsQuery } from "@/lib/redux/api/orders"
 
 type TimePeriod = "Today" | "Last Week" | "This Month" | "Last Month"
 
@@ -19,6 +20,8 @@ interface StatCardProps {
   className?: string
   timeFilter?: boolean
   onTimeChange?: (period: TimePeriod) => void
+  loading?: boolean
+  error?: boolean
 }
 
 function StatCard({
@@ -27,15 +30,15 @@ function StatCard({
   className,
   timeFilter = false,
   onTimeChange,
+  loading,
+  error,
 }: StatCardProps) {
   const [selectedTime, setSelectedTime] = useState<TimePeriod>("Today")
 
   const handleTimeChange = (value: string) => {
     const period = value as TimePeriod
     setSelectedTime(period)
-    if (onTimeChange) {
-      onTimeChange(period)
-    }
+    onTimeChange?.(period)
   }
 
   return (
@@ -72,79 +75,50 @@ function StatCard({
         )}
       </CardHeader>
       <CardContent>
-        <div className="text-[28px]/[120%] -tracking-[2%] font-figtree font-semibold text-[#191A1A]">
-          {value}
-        </div>
+        {loading ? (
+          <div className="h-[32px] w-20 bg-gray-200 rounded animate-pulse" />
+        ) : error ? (
+          <div className="text-[12px] text-red-600">Failed to load</div>
+        ) : (
+          <div className="text-[28px]/[120%] -tracking-[2%] font-figtree font-semibold text-[#191A1A]">
+            {value}
+          </div>
+        )}
       </CardContent>
     </Card>
   )
 }
 
-export function TripsStats() {
-  // Sample data for different time periods - using regular objects instead of state
-  const pendingOrderData = {
-    Today: "5,210,500",
-    "Last Week": "114,280",
-    "This Month": "152,490",
-    "Last Month": "418,320",
-  }
+export function TripsStats({ userId }: { userId: number | string }) {
+  // Pull live counts from the API
+  const { data, isLoading, isError } = useGetOrderStatsQuery({ userId })
 
-  const ordersData = {
-    Today: "236",
-    "Last Week": "412",
-    "This Month": "845",
-    "Last Month": "632",
-  }
-  const visitsData = {
-    Today: "65",
-    "Last Week": "10",
-    "This Month": "7",
-    "Last Month": "40",
-  }
-
-  const cancelledData = {
-    Today: "75",
-    "Last Week": "412",
-    "This Month": "845",
-    "Last Month": "632",
-  }
-  const [completedOrderValue, setCompletedOrderValue] = useState(
-    pendingOrderData["Today"]
-  )
-  const [pendingValue, setPendingValue] = useState(visitsData["Today"])
-  const [cancelledValue, setCancelledValue] = useState(cancelledData["Today"])
-
-  const handleCompletedOrderTimeChange = (period: TimePeriod) => {
-    setCompletedOrderValue(pendingOrderData[period])
-  }
-
-  const handlePendingOrderTimeChange = (period: TimePeriod) => {
-    setPendingValue(pendingOrderData[period])
-  }
-
-  const handleCancelledTimeChange = (period: TimePeriod) => {
-    setCancelledValue(ordersData[period])
-  }
+  const completed = data?.completed ?? data?.completed ?? data?.completed // just in case, but our slice exposes .completed
+  const pending = data?.pending ?? 0
+  const cancelled = data?.cancelled ?? 0
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <StatCard
-        title="Completed Order"
-        value={`₦ ${completedOrderValue}`}
-        timeFilter={true}
-        onTimeChange={handleCompletedOrderTimeChange}
+        title="Completed Orders"
+        value={completed ?? 0}
+        loading={isLoading}
+        error={isError}
+        timeFilter={false}
       />
       <StatCard
-        title="Pending order"
-        value={pendingValue}
+        title="Pending Orders"
+        value={pending ?? 0}
+        loading={isLoading}
+        error={isError}
         timeFilter={false}
-        onTimeChange={handlePendingOrderTimeChange}
       />
       <StatCard
         title="Cancelled Orders"
-        value={cancelledValue}
-        timeFilter={true}
-        onTimeChange={handleCancelledTimeChange}
+        value={cancelled ?? 0}
+        loading={isLoading}
+        error={isError}
+        timeFilter={false}
       />
     </div>
   )
