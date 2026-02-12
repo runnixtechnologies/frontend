@@ -16,7 +16,7 @@ export default function Footer() {
 
   return (
     <footer className="w-full py-6 bg-[#232323] flex justify-center items-center px-4 sm:px-6 md:px-10 lg:px-24 z-10">
-      <div className="w-full h-full  max-w-[1440px] flex flex-col gap-6 xl:gap-8 lg:gap-[72px] xl:flex-row justify-between text-left">
+      <div className="w-full h-full max-w-[1440px] flex flex-col gap-6 xl:gap-8 lg:gap-[72px] xl:flex-row justify-between items-center text-left">
         {/* Logo */}
         <DarkBgLogo className="w-[100px] sm:w-[120px] xl:w-1[143px]" />
 
@@ -26,9 +26,11 @@ export default function Footer() {
         </span>
 
         {/* Links and Socials */}
-        <div className="w-full xl:w-[520px] flex flex-col md:flex-row gap-4 sm:gap-6 justify-between items-start xl:justify-end">
+        <div className="w-full xl:w-auto flex flex-col md:flex-row gap-4 sm:gap-6 justify-between items-start xl:justify-end">
           <div className="flex flex-col items-center sm:flex-row gap-3 lg:gap-6">
-            <ThemeToggle />
+            <span className="mt-2">
+              <ThemeToggle />
+            </span>
             <Link
               href="/"
               className="text-[#989898] text-sm sm:text-base font-figtree hover:underline underline-offset-4"
@@ -42,7 +44,7 @@ export default function Footer() {
               Contact Us
             </Link>
           </div>
-          <div className="hidden lg:flex gap-6 sm:gap-9">
+          <div className="hidden lg:flex gap-6 sm:gap-3 mt-2">
             {socials?.map((social, index) => (
               <Link
                 key={index}
