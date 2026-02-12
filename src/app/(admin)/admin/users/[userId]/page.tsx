@@ -21,7 +21,6 @@ export default function UserDetailPage() {
   const idParam = params?.userId ?? params?.id ?? ""
   const userId = Number(idParam)
 
-  // pick which kind of user detail you are viewing
   // change to "rider" or "merchant" when used on their pages
   const userType: "user" | "rider" | "merchant" = "user"
 
@@ -156,7 +155,7 @@ export default function UserDetailPage() {
           </div>
         </div>
 
-        <div className="w-full flex flex-col gap-[48px]">
+        <div className="w-full flex flex-col gap-12">
           <DetailTabs activeTab={activeTab} setActiveTab={setActiveTab} />
           <div className="w-full">
             {activeTab === "bio" && (

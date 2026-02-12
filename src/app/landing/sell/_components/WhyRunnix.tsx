@@ -77,7 +77,7 @@ export default function WhyRunnixSection() {
                 width={96}
                 height={96}
                 quality={80}
-                className="w-[72px] h-[72px] lg:w-[96px] lg:h-[96px]"
+                className="w-[72px] h-[72px] lg:w-[96px] lg:h-24"
               />
               <div className="flex flex-col gap-2">
                 <h3 className="text-lg lg:text-xl font-bold font-figtree dark:text-white text-black">

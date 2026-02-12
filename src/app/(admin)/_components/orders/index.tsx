@@ -97,7 +97,7 @@ export function OrdersTable({ userId }: { userId: number }) {
     <div className="w-full flex flex-col gap-3">
       <OrderStats userId={userId} />
 
-      <div className="w-full flex flex-col items-center xl:flex-row gap-2 h-[96px] pt-6 pb-5 px-6 justify-between">
+      <div className="w-full flex flex-col items-center xl:flex-row gap-2 h-24 pt-6 pb-5 px-6 justify-between">
         <h2 className="text-[#191A1A] font-figtree font-bold text-[24px]/[32px] -tracking-[2%]">
           Orders
         </h2>
@@ -110,7 +110,7 @@ export function OrdersTable({ userId }: { userId: number }) {
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow className="h-[44px] bg-[#EFEFEF] border-y border-[#F2F2F2]">
+              <TableRow className="h-11 bg-[#EFEFEF] border-y border-[#F2F2F2]">
                 <TableHead>Date &amp; Time</TableHead>
                 <TableHead>User Name</TableHead>
                 <TableHead>Rider Name</TableHead>
@@ -155,10 +155,10 @@ export function OrdersTable({ userId }: { userId: number }) {
                     <TableCell>{d.rider}</TableCell>
                     <TableCell>{d.fee}</TableCell>
                     <TableCell>{d.packs}</TableCell>
-                    <TableCell className="max-w-[150px] whitespace-normal break-words">
+                    <TableCell className="max-w-[150px] whitespace-normal wrap-break-words">
                       {d.destination}
                     </TableCell>
-                    <TableCell className="max-w-[150px] whitespace-normal break-words">
+                    <TableCell className="max-w-[150px] whitespace-normal wrap-break-words">
                       {d.ends}
                     </TableCell>
                     <TableCell>{d.duration}</TableCell>

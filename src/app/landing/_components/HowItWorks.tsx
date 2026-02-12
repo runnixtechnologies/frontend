@@ -42,7 +42,7 @@ export default function HowItWorksSection() {
   return (
     <section className="w-full relative dark:bg-[#161226] bg-white flex justify-center items-center py-10 lg:py-20 3xl:pb-30 px-4 2:px-0">
       <div
-        className="w-full 2xl:w-[1200px] 3xl:w-[1350px] 4xl:w-[1400px] flex flex-col justify-center items-center gap-[48px]"
+        className="w-full 2xl:w-[1200px] 3xl:w-[1350px] 4xl:w-[1400px] flex flex-col justify-center items-center gap-12"
         data-aos="fade-up"
       >
         <div className="w-full flex flex-col gap-12">
@@ -52,7 +52,7 @@ export default function HowItWorksSection() {
             </h2>
             <GetStartedButton buttonText="Get the App" link="/" />
           </div>
-          <div className="w-full flex flex-col lg:flex-row justify-between items-center gap-6 xl:gap-[48px]">
+          <div className="w-full flex flex-col lg:flex-row justify-between items-center gap-6 xl:gap-12">
             {data?.map((item) => (
               <div
                 key={item.id}

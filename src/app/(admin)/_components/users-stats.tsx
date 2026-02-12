@@ -53,6 +53,8 @@ export function UserStats({ type }: { type: "user" | "rider" | "merchant" }) {
   const { data, isLoading, isError, error, refetch } = useGetUserStatsQuery({
     userType: type,
   })
+  console.log("UserStats data:", data)  
+
 
   const { active, suspended, inactive, newlyAdded } = data ?? {
     active: 0,

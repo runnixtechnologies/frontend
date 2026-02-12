@@ -11,7 +11,7 @@ export default function Products({ userId }: ProductsProps) {
   const [activeTab, setActiveTab] = useState<TabKey>("form")
 
   return (
-    <div className="flex gap-[48px]">
+    <div className="flex gap-12">
       <ProductTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
       <div className="w-full">

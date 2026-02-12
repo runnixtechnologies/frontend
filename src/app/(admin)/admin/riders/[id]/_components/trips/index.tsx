@@ -121,7 +121,7 @@ export function TripsTable({ riderId, pageSize = 10 }: TripsTableProps) {
       {/* Rider stats header (backed by /order-stats) */}
       <OrderStats userId={riderId} />
 
-      <div className="w-full flex flex-col items-center xl:flex-row gap-2 h-[96px] pt-6 pb-5 px-6 justify-between">
+      <div className="w-full flex flex-col items-center xl:flex-row gap-2 h-24 pt-6 pb-5 px-6 justify-between">
         <h2 className="text-[#191A1A] font-figtree font-bold text-[24px]/[32px] -tracking-[2%]">
           Orders
         </h2>

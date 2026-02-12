@@ -100,7 +100,7 @@ export default function MerchantsPage() {
             </div>
           </div>
         </div>
-        <div className="w-full flex flex-col gap-[48px]">
+        <div className="w-full flex flex-col gap-12">
           <MerchantDetailTabs
             activeTab={activeTab}
             setActiveTab={setActiveTab}

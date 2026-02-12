@@ -83,7 +83,7 @@ export default function FAQsSection() {
         <Accordion
           type="single"
           collapsible
-          className="grid grid-cols-1 gap-4 xl:gap-[48px] w-full xl:grid-cols-2"
+          className="grid grid-cols-1 gap-4 xl:gap-12 w-full xl:grid-cols-2"
         >
           {questions?.map((question, index) => {
             // For single column layout (mobile to lg)

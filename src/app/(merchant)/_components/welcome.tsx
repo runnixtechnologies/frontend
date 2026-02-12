@@ -90,7 +90,7 @@ export default function WelcomeOnboard() {
               <LockIcon />
             </div>
 
-            <div className="flex items-center justify-between gap-[48px]">
+            <div className="flex items-center justify-between gap-12">
               <div className="flex flex-col gap-1">
                 <h2 className="text-2xl/[120%] font-figtree font-semibold text-[#232323] -tracking-[2%]">
                   Here are your to-dos

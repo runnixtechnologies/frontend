@@ -150,7 +150,7 @@ export default function AdminsDetailsPage({
             </div>
           </div>
 
-          <div className="w-full flex flex-col gap-[48px]">
+          <div className="w-full flex flex-col gap-12">
             <AdminDetailTabs
               activeTab={activeTab}
               setActiveTab={setActiveTab}

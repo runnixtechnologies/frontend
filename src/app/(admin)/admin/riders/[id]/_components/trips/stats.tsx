@@ -44,7 +44,7 @@ function StatCard({
   return (
     <Card
       className={cn(
-        "h-[96px] p-4 overflow-hidden gap-0 border rounded-xl border-[#E6E6E6]",
+        "h-24 p-4 overflow-hidden gap-0 border rounded-xl border-[#E6E6E6]",
         className
       )}
     >

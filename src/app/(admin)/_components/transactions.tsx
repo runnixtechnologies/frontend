@@ -130,7 +130,7 @@ export default function Transactions({ userType, userId }: Props) {
   return (
     <div className="w-full xl:w-[938px] flex flex-col xl:flex-row gap-4">
       <div className="border-0 xl:border-r xl:border-[#E6E6E6] xl:pr-10">
-        <div className="w-[505.99px] grid grid-cols-1 gap-[48px]">
+        <div className="w-[505.99px] grid grid-cols-1 gap-12">
           <div className="w-full flex justify-between gap-2">
             <h3 className="font-figtree font-bold text-[20px]/[120%] -tracking-[2%] text-black">
               Transaction History

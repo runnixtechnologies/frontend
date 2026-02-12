@@ -16,7 +16,7 @@ function StatCard({
   return (
     <Card
       className={cn(
-        "h-[96px] p-4 overflow-hidden gap-0 border rounded-xl border-[#E6E6E6]",
+        "h-24 p-4 overflow-hidden gap-0 border rounded-xl border-[#E6E6E6]",
         className
       )}
     >
@@ -65,7 +65,7 @@ export function OrderStats({ userId }: { userId?: string | number }) {
     cancelled = 0,
     completed = 0,
   } = data ?? {}
-
+console.log("OrderStats data:", data)
   if (isLoading) return <StatSkeleton />
 
   if (isError) {

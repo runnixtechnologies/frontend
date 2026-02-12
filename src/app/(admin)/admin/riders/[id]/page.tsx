@@ -160,7 +160,7 @@ export default function RidersPage() {
           </div>
         </div>
 
-        <div className="w-full flex flex-col gap-[48px]">
+        <div className="w-full flex flex-col gap-12">
           <RiderDetailTabs activeTab={activeTab} setActiveTab={setActiveTab} />
           <div className="w-full">
             {/* For riders, filter orders by riderId */}

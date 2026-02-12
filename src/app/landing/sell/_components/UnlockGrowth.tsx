@@ -55,7 +55,7 @@ export default function UnlockGrowthSection() {
   return (
     <section className="w-full relative bg-[#FFE2D4] flex justify-center items-center py-10 lg:py-20 3xl:pb-30 px-4 2:px-0">
       <div
-        className="w-full 2xl:w-[1200px] flex flex-col justify-center items-center gap-[48px]"
+        className="w-full 2xl:w-[1200px] flex flex-col justify-center items-center gap-12"
         data-aos="fade-up"
       >
         <div className="w-full flex flex-col gap-16">

@@ -15,7 +15,7 @@ export default function DownloadSection() {
             }}
           ></div>
           <div className="w-full mx-auto max-w-[1000px] flex flex-col xl:flex-row items-center justify-center gap-[14px] xl:gap-[96px] z-10">
-            <div className="w-full xl:w-[599.12px] py-[48px] px-6 flex flex-col gap-[48px]">
+            <div className="w-full xl:w-[599.12px] py-[48px] px-6 flex flex-col gap-12">
               <h4 className="w-full font-figtree font-bold text-white text-[54px]/[110%] xl:text-[75px]/[110%] -tracking-[2%]">
                 Download the Runnix App today!
               </h4>

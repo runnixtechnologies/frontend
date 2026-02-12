@@ -48,7 +48,7 @@ export default function MerchantInformation() {
   return (
     <div className="w-full xl:w-[938px] flex flex-col xl:flex-row gap-4">
       <div className="border-0 xl:border-r xl:border-[#E6E6E6]">
-        <div className="w-[505.99px] grid grid-cols-1 gap-[48px]">
+        <div className="w-[505.99px] grid grid-cols-1 gap-12">
           <div className="w-[505.99px] grid grid-cols-1 xl:grid-cols-2 gap-[64px]">
             <div className="flex flex-col gap-[8px]">
               <h4 className="font-figtree font-medium text-[14px]/[20px] tracking-normal text-[#666666]">
