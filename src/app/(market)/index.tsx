@@ -56,7 +56,7 @@ export default function LandingRootLayoutWrapper({
       )}
       <div className="relative z-10 flex flex-col min-h-screen">
         <Header />
-        <main className="flex-grow">{children}</main>
+        <main className="grow">{children}</main>
         <Footer />
       </div>
     </div>
